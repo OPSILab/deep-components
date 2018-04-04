@@ -65,7 +65,7 @@ Example :
 
                 --paper-spinner-stroke-width: 8px;
 
-                --paper-spinner-layer-1-color: #2196F3;
+                --paper-spinner-layer-1-color: #4A2E40;
                 --paper-spinner-layer-2-color: #F44336;;
                 --paper-spinner-layer-3-color: #FFEB3B;;
                 --paper-spinner-layer-4-color: #4CAF50;;
@@ -76,7 +76,7 @@ Example :
                 text-decoration: none;
             }
             a:hover {
-                color: #00ACC1;
+                color: #2db395;
                 text-decoration: underline;
             }
 
@@ -185,7 +185,7 @@ Example :
             }
 
             .export:hover {
-                /*color: #2196F3;*/
+                /*color: #4A2E40;*/
                 background: url("static/images/more_blue.svg") no-repeat 0 0;
             }
 
@@ -315,7 +315,7 @@ Example :
             }
 
             #fullscreen:hover {
-                /*color: #2196F3;*/
+                /*color: #4A2E40;*/
                 background: url("static/images/fullscreen_blue.svg") no-repeat 0 0;
             }
 
@@ -342,7 +342,7 @@ Example :
                 width: 40px;
                 background: url("static/images/close.svg") no-repeat 0 0;
 
-                background-color: #00BCD4;
+                background-color: #4A2E40;
                 box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
                 transition: all 0.3s cubic-bezier(.25,.8,.25,1);
 
@@ -358,7 +358,7 @@ Example :
             }
 
             #fullscreen_close:hover {
-                background-color: #00ACC1;
+                background-color: #5e314e;
             }
 
             #fullscreen_container {
@@ -495,8 +495,8 @@ Example :
                     <div class="highcharts-contextmenu-container">
                         <div id="export_html"     on-click="exportToHTML"><span id="export_to_html"></span></div>
                         <div id="export_png"      on-click="exportToIMG"><span id="export_to_png"></span></div>
-                        <div id="export_rtf"      on-click="exportRTF"><span id="export_to_rtf"></span></div>
-                        <div id="export_my_space" on-click="importToMySpace"><span id="import_myspace"></span></div>
+<!--                         <div id="export_rtf"      on-click="exportRTF"><span id="export_to_rtf"></span></div> -->
+<!--                         <div id="export_my_space" on-click="importToMySpace"><span id="import_myspace"></span></div> -->
                     </div>
                 </div>
             </div>
@@ -691,8 +691,8 @@ Example :
 
                 this.$.export_to_html.innerHTML = base_datalet_ln["export_HTML_" + ln];
                 this.$.export_to_png.innerHTML = base_datalet_ln["export_PNG_" + ln];
-                this.$.export_to_rtf.innerHTML = base_datalet_ln["export_RTF_" + ln];
-                this.$.import_myspace.innerHTML = base_datalet_ln["import_myspace_" + ln];
+//                 this.$.export_to_rtf.innerHTML = base_datalet_ln["export_RTF_" + ln];
+                //this.$.import_myspace.innerHTML = base_datalet_ln["import_myspace_" + ln];
 
             },
 
@@ -704,7 +704,8 @@ Example :
                 if(this.disable_my_space)
                     bitmask -= 8;
 
-                var menu = ["export_html", "export_png", "export_rtf", "export_my_space"];
+                //var menu = ["export_html", "export_png", "export_rtf", "export_my_space"];
+                var menu = ["export_html", "export_png"];
 
                 if(bitmask == 15) return;
 
@@ -750,7 +751,7 @@ Example :
                         '\<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"\>\<\/script\>\n' +
                         '<!-- REMOVE THE PREVIOUS SCRIPT TAGS IF YOUR PAGE ALREADY USES JQUERY AND POLYFILL LIBRARIES  -->\n';
 
-                var dataletLink = '<link rel="import" href="http://deep.routetopa.eu/deep/COMPONENTS/datalets/'+parent.is+'/'+parent.is+'.html" /> \n';
+                var dataletLink = '<link rel="import" href="http://localhost/deep/deep-components/datalets/'+parent.is+'/'+parent.is+'.html" /> \n';
 
                 var div = document.createElement('div');
                 div.innerHTML = '<div class="overlay" id="overlay">' +
@@ -788,7 +789,7 @@ Example :
 
                 //xhr.open('POST', 'http://172.16.15.77/DEEalerProvider/DEEP/export/export-datalet-as-img', true);
                 //xhr.open('POST', 'http://stage.routetopa.eu/deep/DEEP/export/export-datalet-as-img', true);
-                xhr.open('POST', 'http://deep.routetopa.eu/deep/DEEP/export/export-datalet-as-img', true);
+                xhr.open('POST', 'http://localhost/deep/deep/export/export-datalet-as-img', true);
                 xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
                 var post = 'svg_data=' + window.encodeURIComponent(svg);
@@ -817,7 +818,7 @@ Example :
                     data: {"post_id" : post_id, "datalet_id" : datalet_id, "is_public_room" : isPublicRoom},
                     dataType: "json",
                     success: function(e){
-                        xhr.open('POST', 'http://deep.routetopa.eu/deep/DEEP/export/export-datalet-as-rtf', true);
+                        xhr.open('POST', 'http://localhost/deep/deep/export/export-datalet-as-rtf', true);
                         xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
                         var post = 'svg_data=' + window.encodeURIComponent(svg) + '&datalet=' + parent.is + '&dataset=' + t.$.base_datalet_link.getAttribute("href");
@@ -937,7 +938,7 @@ Example :
                         '<!-- REMOVE THE PREVIOUS SCRIPT TAGS IF YOUR PAGE ALREADY USES JQUERY AND POLYFILL LIBRARIES  -->\n';
 
 //                var dataletLink = '<link rel="import" href="http://172.16.15.128/Datalet-Ecosystem-Provider/COMPONENTS/datalets/'+parent.is+'/'+parent.is+'.html" /> \n';
-                var dataletLink = '<link rel="import" href="http://deep.routetopa.eu/deep/COMPONENTS/datalets/'+parent.is+'/'+parent.is+'.html" /> \n';
+                var dataletLink = '<link rel="import" href="http://localhost/deep/deep-components/datalets/'+parent.is+'/'+parent.is+'.html" /> \n';
 
                 var div = document.createElement('div');
                 div.innerHTML = '<div class="overlay" id="overlay">' +

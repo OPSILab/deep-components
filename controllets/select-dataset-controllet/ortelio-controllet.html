@@ -55,25 +55,25 @@
 
             paper-textarea {
                 width: 100%;
-                --paper-input-container-focus-color: #2196F3;
+                --paper-input-container-focus-color: #4A2E40;
             }
 
             paper-input {
-                --paper-input-container-focus-color: #2196F3;
+                --paper-input-container-focus-color: #4A2E40;
             }
             paper-dropdown-menu {
                 width: 100%;
-                --paper-input-container-focus-color: #2196F3;
+                --paper-input-container-focus-color: #4A2E40;
             }
 
             paper-item.iron-selected {
-                background-color: #2196F3;
+                background-color: #4A2E40;
                 color: #FFFFFF;
             }
 
             paper-radio-button {
                 height: 24px;
-                --paper-radio-button-checked-color: #2196F3;
+                --paper-radio-button-checked-color: #4A2E40;
                 --paper-radio-button-checked-ink-color: #FFFFFF;
                 --paper-radio-button-unchecked-color: #000000;
                 --paper-radio-button-unchecked-ink-color: #FFFFFF;
@@ -88,7 +88,7 @@
             }
 
             paper-icon-button:hover{
-                color: #2196F3;
+                color: #4A2E40;
             }
 
             paper-icon-button[disabled]{
@@ -112,12 +112,12 @@
             }
 
             paper-tab.iron-selected {
-                background-color: #2196F3;
+                background-color: #4A2E40;
                 color: #FFFFFF;
             }
 
             paper-tab:not(.iron-selected):hover {
-                color: #2196F3;
+                color: #4A2E40;
             }
 
             .item {
@@ -132,8 +132,8 @@
             }
 
             .item.expanded {
-                /*border: 2px solid #2196F3;*/
-                border-color: #2196F3;
+                /*border: 2px solid #4A2E40;*/
+                border-color: #4A2E40;
             }
 
             .pad {
@@ -146,7 +146,7 @@
             }
 
             .item.expanded .primary {
-                color: #2196F3;
+                color: #4A2E40;
             }
 
             .longText {
@@ -499,7 +499,7 @@
                         if(this.$.list.selectedItem) {
 
                             var metas = this.$.list.selectedItem;
-                            var html = "<span style=\"color: #2196F3; font-weight: bold;\">" + this.$.list.selectedItem.package_name + "</span><br><br>";
+                            var html = "<span style=\"color: #4A2E40; font-weight: bold;\">" + this.$.list.selectedItem.package_name + "</span><br><br>";
                             for(var i in metas)
                                 html += "<b>" + i + ":</b> " + metas[i] + "<br>";
                             this.$.info.innerHTML = html;

@@ -15,6 +15,7 @@
 
     <script type="text/javascript">
         $(document).ready(function () {
+		document.getElementById('controllet_iframe').src = "controllet_odf.html" + window.location.search;																							
             editAreaLoader.init({
                 id : "text_area",         // textarea id
                 syntax: "html",           // syntax to be uses for highgliting
@@ -28,27 +29,72 @@
         {
             var dataletHTML = "";
 
+			console.log(e.detail.storeDatalet);
+			
             dataletHTML = '<' + e.detail.data.datalet;
 
+			var title="";
+			var description="";
+			
+			//console.log(e.detail.data);
+			
             for (var property in e.detail.data.params) {
                 if (e.detail.data.params.hasOwnProperty(property)) {
-                    if(property != "_colorIndex")
+                    if(property != "_colorIndex" && property != "data-url")
                         dataletHTML += ' ' + property + '=\'' + e.detail.data.params[property] + '\'';
+					else if(property == "data-url")
+						dataletHTML += ' ' + property + '=\'' + unescape(e.detail.data.params[property]) + '\'';
                 }
+				
+				if(property=="datalettitle"){
+					title=e.detail.data.params[property];
+				}
+				
+				if(property=="description"){
+					description=e.detail.data.params[property];
+				}
             }
 
             dataletHTML += ' fields=\'' + JSON.stringify(e.detail.data.fields) + '\'';
-            //dataletHTML += ' data=\''   + e.detail.data.staticData + '\'>';
+			
+            var format=e.detail.data.format;
+            if(format!=undefined &&  format.toLowerCase()=='csv'){
+                dataletHTML += ' data=\''   + e.detail.data.staticData + '\'';
+            }
+            dataletHTML += ' format=\'' +format + '\'';
             dataletHTML += '>';
             dataletHTML += '</'+e.detail.data.datalet+'>';
-
-            var dataletImport   = '\<script type="text/javascript" src="http://deep.routetopa.eu/deep_1_17/COMPONENTS/bower_components/webcomponentsjs/webcomponents-lite.min.js"\>\<\/script\>\n' +
+			
+            var dataletImport   = '\<script type="text/javascript" src="https://cdn.jsdelivr.net/webcomponentsjs/0.7.16/webcomponents-lite.min.js"\>\<\/script\>\n' +
                                   '\<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"\>\<\/script\>\n' +
                                   '<!-- REMOVE THE PREVIOUS SCRIPT TAGS IF YOUR PAGE ALREADY USES JQUERY AND POLYFILL LIBRARIES  -->\n';
 
-            var dataletLink     = '<link rel="import" href="http://deep.routetopa.eu/deep_1_17/COMPONENTS/datalets/'+e.detail.data.datalet+'/'+e.detail.data.datalet+'.html" /> \n';
+            //var dataletLink     = '<link rel="import" href="http://deep.routetopa.eu/deep_1_7/COMPONENTS/datalets/'+e.detail.data.datalet+'/'+e.detail.data.datalet+'.html" /> \n';
+			var dataletLink     = '<link rel="import" href="http://localhost/deep/deep-components/datalets/'+e.detail.data.datalet+'/'+e.detail.data.datalet+'.html" /> \n';
 
             editAreaLoader.setValue("text_area", dataletImport+dataletLink+dataletHTML);
+			document.getElementById('text_area_container').style.display = "block";
+			
+			var storeDatalet = e.detail.storeDatalet;
+			
+			$.ajax({
+				url: "http://localhost:8080/FederationManager/api/v1/client/node/"+storeDatalet.nodeID+"/dataset/"+storeDatalet.datasetID+"/distribution/"+storeDatalet.distributionID+"/createDatalet",
+				type: "POST",
+				//dataType:"json",
+				contentType: "application/json",
+				data:	JSON.stringify({
+					"datalet_html": dataletLink+dataletHTML,
+					"title":title,
+					"description":description
+					}),
+				success: function(data, textStatus, xhr){
+					alert("OK");
+				},
+				error:function(){
+					alert("PROBLEM");
+				}
+			});
+			
         }
 
     </script>
@@ -68,8 +114,8 @@
 
         #text_container {
             padding: 8px;
-            background: #BBDEFB;
-
+            //background: #BBDEFB;
+			background: #B6B6B6;
             margin-top: 8px;
         }
 
@@ -79,14 +125,15 @@
         }
 
         #iframe_container {
-            border: 2px solid #BBDEFB;
+            //border: 2px solid #BBDEFB;
+			border: 2px solid #B6B6B6;
             border-top: 0;
             width: calc(100% - 4px);
             height: 698px;
         }
 
         #toolbar {
-            background: #2196F3;
+            background: #4A2E40;
         }
 
         .title {
@@ -136,10 +183,8 @@
     <div id="creator_container">
 
         <paper-toolbar id="toolbar">
-            <a href="http://routetopa.eu/" target="_blank"><paper-icon-button id="logo" title="ROUTE-TO PA European Project"></paper-icon-button></a>
             <span class="title">DatalEts-Ecosystem Provider - Datalet Creator</span>
             <a href="docs/docs.html" target="_blank"><paper-icon-button icon="description" title="DEEP Documentation"></paper-icon-button></a>
-            <a href="http://routetopa.eu/" target="_blank"><paper-icon-button icon="forward" title="ROUTE-TO PA European Project"></paper-icon-button></a>
         </paper-toolbar>
 
         <div id="text_container">
@@ -153,7 +198,7 @@
             <iframe id="controllet_iframe" frameborder="0" src="./iframe_controllet.html"></iframe>
         </div>
 
-        <div id="text_area_container">
+        <div id="text_area_container" style="display:none">
             <textarea id="text_area">Copy and paste this code to inject the datalet in you page.</textarea>
         </div>
     </div>

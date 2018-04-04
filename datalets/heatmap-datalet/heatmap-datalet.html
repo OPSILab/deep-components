@@ -51,7 +51,7 @@ Example:
 
 <dom-module id="heatmap-datalet">
     <template>
-        <highcharts-datalet id="charts" data-url="{{dataUrl}}" fields="{{fields}}" datalettitle="{{datalettitle}}" description="{{description}}" export_menu="{{export_menu}}" disable_my_space="{{disable_my_space}}"></highcharts-datalet>
+        <highcharts-datalet id="charts" data-url="{{dataUrl}}" fields="{{fields}}" datalettitle="{{datalettitle}}" description="{{description}}" export_menu="{{export_menu}}" disable_my_space="{{disable_my_space}}" format="{{format}}"></highcharts-datalet>
     </template>
     <script>
 
@@ -81,7 +81,7 @@ Example:
 
                 var stops = false;
                 if (min < 0) {
-                    var stops = [[0, '#F44336'], [1, '#2196F3']];
+                    var stops = [[0, '#F44336'], [1, '#4A2E40']];
                     min = -Math.max(Math.abs(min), Math.abs(max));
                     max = Math.max(Math.abs(min), Math.abs(max));
                 }

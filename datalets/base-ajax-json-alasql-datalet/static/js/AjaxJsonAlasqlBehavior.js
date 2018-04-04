@@ -55,25 +55,27 @@ var AjaxJsonAlasqlBehavior = {
      */
     requestData: function(){
 
-        var comp = this;
+       var comp = this;
+		console.log(encodeURIComponent(this._component.dataUrl));
 
         $.ajax({
-            url: this._component.dataUrl,
-            dataType: "json",
-            success: function(e){
-                try{
-                    comp.handleResponse(e);
-                }
-                catch (ex){
-                    $(comp._component).find("base-datalet")[0].removeLoader();
-                    $($(comp._component).find("#ajax_error")[0]).append(' error: javascript ');
-                    console.log(ex);
-                }
-            },
-            error: function(e) {
-                $(comp._component).find("base-datalet")[0].removeLoader();
-                $($(comp._component).find("#ajax_error")[0]).append(' ' + e.statusText + ': ' + e.status);
-                console.log(e);
+            url: 'http://localhost:8080/FederationManager/api/v1/client/downloadFromUri?url='+encodeURIComponent(this._component.dataUrl),
+            //dataType: "json",
+            success: function(e,textStatus,xhr){
+				console.log("success");				
+				var contentType="";
+				 
+						   
+				if(comp._component.format==undefined){
+					contentType=xhr.getResponseHeader('Content-Type');	
+				}else{
+				 
+			  
+								
+					contentType=comp._component.format.toLowerCase();
+				}						
+                comp.handleResponse(e,contentType);
+				
             }
         });
     },
@@ -83,8 +85,14 @@ var AjaxJsonAlasqlBehavior = {
      *
      * @method handleResponse
      */
-    handleResponse: function(e) {
-        this.properties.json_results.value = e;
+    handleResponse: function(e,contentType) {
+		
+		//check file type (JSON,CSV,XML,KML)
+		var f = Object.create(fileParserFactory);
+        var parser = f.checkFile(contentType);
+		var result=parser.parse(e);
+
+        this.properties.json_results.value = result;
         this.runWorkcycle();
     },
 

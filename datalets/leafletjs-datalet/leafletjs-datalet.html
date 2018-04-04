@@ -51,7 +51,7 @@ Example:
 <dom-module name="leafletjs-datalet">
     <template>
         <link rel="stylesheet" href="leafletsjs/leaflet.css" />
-        <base-ajax-json-alasql-datalet id="baseAjaxJsonAlasqlDatalet" data-url="{{dataUrl}}" fields="{{fields}}" data="{{data}}" datalettitle="{{datalettitle}}" description="{{description}}" export_menu="{{export_menu}}" disable_my_space="{{disable_my_space}}"></base-ajax-json-alasql-datalet>
+        <base-ajax-json-alasql-datalet id="baseAjaxJsonAlasqlDatalet" data-url="{{dataUrl}}" fields="{{fields}}" data="{{data}}" datalettitle="{{datalettitle}}" description="{{description}}" export_menu="{{export_menu}}" disable_my_space="{{disable_my_space}}" format="{{format}}"></base-ajax-json-alasql-datalet>
 
     </template>
 
@@ -75,7 +75,7 @@ Example:
                 var t = this;
 
 //                L.Icon.Default.imagePath = 'http://172.16.15.128/Datalet-Ecosystem-Provider/COMPONENTS/datalets/leafletjs-datalet/leafletsjs/images/';
-                L.Icon.Default.imagePath = 'http://deep.routetopa.eu/deep/COMPONENTS/datalets/leafletjs-datalet/leafletsjs/images/';
+                L.Icon.Default.imagePath = 'http://localhost/deep/deep-components/datalets/leafletjs-datalet/leafletsjs/images/';
 
 
                 var blueIcon = new L.Icon({

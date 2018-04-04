@@ -1,0 +1,265 @@
+<!--
+@license
+    The MIT License (MIT)
+
+    Copyright (c) 2015 Dipartimento di Informatica - Università di Salerno - Italy
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in
+    all copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+    THE SOFTWARE.
+-->
+
+<!--
+* Developed by :
+* ROUTE-TO-PA Project - grant No 645860. - www.routetopa.eu
+*
+-->
+
+<link rel="import" href="../base-ajax-json-alasql-datalet/base-ajax-json-alasql-datalet.html">
+
+<!--
+
+`leafletjs-datalet` is a map datalet based on open source project leafletjs <http://leafletjs.com/>
+
+Example:
+
+    <leafletjs-datalet
+        data-url="http://ckan.routetopa.eu/api/action/datastore_search?resource_id=#"
+        fields='["field1","field2"]'>
+    </leafletjs-datalet>
+
+@element leafletjs-datalet
+@status v0.1
+@demo demo/index.html
+@group datalets
+-->
+
+<dom-module name="leafletjs-geojson-datalet">
+    <template>
+        <link rel="stylesheet" href="leafletsjs/leaflet.css" />
+        <!--<style>-->
+            <!--#leafletjs {height: 600px;}-->
+            <!---->
+        <!--</style>-->
+        <!--<style>-->
+            <!--#leafletjs {-->
+                <!--height: calc(100% - 82px);-->
+                <!--min-height: 400px;-->
+            <!--}-->
+        <!--</style>-->
+
+        <!--<div id="leafletjs"></div>-->
+        <base-ajax-json-alasql-datalet id="baseAjaxJsonAlasqlDatalet" data-url="{{dataUrl}}" fields="{{fields}}" data="{{data}}" datalettitle="{{datalettitle}}" description="{{description}}" export_menu="{{export_menu}}" disable_my_space="{{disable_my_space}}" format="{{format}}"></base-ajax-json-alasql-datalet>
+
+    </template>
+
+    <script src="leafletsjs/leaflet.js"></script>
+
+    <link rel="stylesheet" href="leafletsjs/marker_cluster/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="leafletsjs/marker_cluster/dist/MarkerCluster.Default.css" />
+    <script src="leafletsjs/marker_cluster/dist/leaflet.markercluster.js"></script>
+
+    <script>
+
+        var leafletjsgeojsonBehavior = {
+
+            /**
+             * Read markers coordinates from the data object and add the marker to the map.
+             * Call a method for the map redraw and set the viewport in order to fit all the markers in the viewport..
+             *
+             * @method transformData
+             */
+            presentData: function() {
+
+				/*function onEachFeature(feature, layer) {
+				// does this feature have a property named popupContent?
+					if (typeof feature.properties =="object" && feature.properties!=undefined) {
+						layer.bindPopup(feature.properties);
+					}
+				}*/
+			
+			console.log("present data");
+                var t = this;
+                try {
+                    //this._component.map = L.map(this._component.$.baseAjaxJsonAlasqlDatalet.$.baseDatalet.$.datalet_container).setView([0, 0], 13, {reset: true});
+					t._component.map = L.map(this._component.$.baseAjaxJsonAlasqlDatalet.$.baseDatalet.$.datalet_container).setView([0, 0], 13, {reset: true});
+					//this._component.map = L.map(this._component.$.leafletjs).setView([0, 0], 13, {reset: true});
+                } catch (e) {
+				console.log(e);
+                }
+
+
+                L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 18,
+                    attribution: 'Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
+                }).addTo(this._component.map);
+
+
+                L.Icon.Default.imagePath = 'http://localhost/deep/deep-components/datalets/leafletjs-datalet/leafletsjs/images/';
+
+                //var coordinates = [];
+                //var coordinates_index  = 0;
+                var geo_layer = L.geoJson();
+                var geo;
+
+                for (var i = 0; i < t.data[0].data.length; i++)
+                {
+                    if(Array.isArray(t.data[0].data[i]))
+                    {
+                        if(!isNaN(t.data[0].data[i][0]) && !isNaN(t.data[0].data[i][1])) {
+                            //coordinates.push([parseFloat(t.data[0].data[i][0]), parseFloat(t.data[0].data[i][1])]);
+                            geo_layer.addData({"type": "Feature","geometry": {"type": "Point", "coordinates": [parseFloat(t.data[0].data[i][0]), parseFloat(t.data[0].data[i][1])]}});
+                        }else
+                            continue;
+                    }
+                    else if(typeof t.data[0].data[i] == 'object')
+                    {
+                        //geo = L.geoJson(t.data[0].data[i],{onEachFeature:onEachFeature}).addTo(t._component.map);
+						geo = L.geoJson(t.data[0].data[i]).addTo(t._component.map);
+                        geo_layer.addData(t.data[0].data[i]);
+                    }
+                    else if(typeof t.data[0].data[i] == 'string' && t.data[0].data[i].startsWith('{"type":"'))
+                    {
+                        try
+                        {
+                            t.data[0].data[i] = JSON.parse(t.data[0].data[i]);
+                            geo = L.geoJson(t.data[0].data[i]).addTo(t._component.map);
+                            geo_layer.addData(t.data[0].data[i]);
+                        }catch(e) {continue;}
+                    }
+                    else if(typeof t.data[0].data[i] == 'string' && t.data[0].data[i].indexOf(","))
+                    {
+                        var coords = t.data[0].data[i].split(",");
+                        if(!isNaN(coords[0]) && !isNaN(coords[1])) {
+                            //coordinates.push([parseFloat(coords[0]), parseFloat(coords[1])]);
+                            geo_layer.addData({"type": "Feature","geometry": {"type": "Point", "coordinates": [parseFloat(coords[0]), parseFloat(coords[1])]}});
+                            geo = L.marker([parseFloat(coords[0]), parseFloat(coords[1])]).addTo(t._component.map);
+                            //coordinates_index++;
+                        }else
+                            continue;
+                    }
+
+                    if(t.data.length > 1)
+                    {
+                        var popupText = "";
+                        for(var j=1; j<t.data.length; j++)
+                        {
+							if(t.data[j].data[i] instanceof Object){
+								for (var prop in t.data[j].data[i]) {
+									if (t.data[j].data[i].hasOwnProperty(prop)) {
+									   popupText += '<span>' + prop + ' : ' + t.data[j].data[i][prop] + '</span><br/>'
+									}
+								}
+							}else if(typeof t.data[j] != 'undefined' && t.data[j].data[i] && typeof t.data[j].data[i] != 'undefined')
+                            {
+                                if (t.data[j].data[i].toString().match(new RegExp("^(http[s]?:\\/\\/(www\\.)?|ftp:\\/\\/(www\\.)?|www\\.){1}([0-9A-Za-z-\\.@:%_\+~#=]+)+((\\.[a-zA-Z]{2,3})+)(/(.)*)?(\\?(.)*)?")))
+                                    popupText += '<image height="100" width="100" src="' + t.data[j].data[i] + '" /><br/>';
+																																																						   
+																															 
+                                else
+                                    popupText += '<span>' + t.data[j].name + ' : ' + t.data[j].data[i] + '</span><br/>'
+                            }
+                        }
+
+                        var popup = L.popup().setContent(popupText);
+                        geo.bindPopup(popup);
+                    }
+                }
+
+                t._component.map._onResize();
+                t._component.map.invalidateSize(false);
+                //t._component.map.fitBounds(geo_layer);
+
+            }
+        };
+
+
+        Polymer({
+
+            is : 'leafletjs-geojson-datalet',
+
+            properties : {
+                /**
+                 * Store a reference to the leafletjs map object created in 'ready' callback
+                 * @attribute map
+                 * @type Object
+                 */
+                map :
+                {
+                    type: Object,
+                    value:null
+                },
+                /**
+                 * An Array with all the markers extracted from the dataset
+                 * @attribute markers
+                 * @type Array
+                 */
+                markers :
+                {
+                    type : Array,
+                    value : []
+                },
+                /**
+                 * It's the component behavior
+                 *
+                 * @attribute behavior
+                 * @type Object
+                 * @default {}
+                 */
+                behavior : {
+                    type : Object,
+                    value : {}
+                },
+                /**
+                 * Control the export menu
+                 * xxxx BITMASK. FROM RIGHT : HTML, PNG, RTF, MY SPACE (eg. 1111 show all, 0000 hide all)
+                 *
+                 * @attribute export_menu
+                 * @type Number
+                 * @default 15
+                 */
+                export_menu : {
+                    type  : Number,
+                    value : 9 // xxxx BITMASK. FROM RIGHT : HTML, PNG, RTF, MY SPACE (eg. 1111 show all, 0000 hide all)
+                },
+
+                disable_my_space : {
+                    type  : Boolean,
+                    value : false // BITMASK -8
+                },
+
+                data : {
+                    type : Array,
+                    value : undefined
+                }
+            },
+
+            /**
+             * 'ready' callback create the map object, set the tileLayer to openstreetmap and the default icon image path.
+             * Moreover extend the leafletjsComponentBehavior with BaseDataletBehavior, WorkcycleBehavior and leafletjsBehavior
+             * and run the Datalet workcycle.
+             *
+             * @method ready
+             */
+            ready: function(){
+                this.behavior =  $.extend(true, {}, BaseDataletBehavior, WorkcycleBehavior, AjaxJsonAlasqlBehavior, leafletjsgeojsonBehavior);
+                this.async(function(){this.behavior.init(this)},100);
+            }
+        });
+    </script>
+</dom-module>
+

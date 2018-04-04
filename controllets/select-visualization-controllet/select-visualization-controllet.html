@@ -10,7 +10,7 @@
 
 <script type="text/javascript" src="../../bower_components/jsdatachecker/jsdatachecker.min.js"></script>
 
-<script src="../../../DEEPCLIENT/js/deepClient.js"></script>
+<script src="../../../deep-client/js/deepClient.js"></script>
 
 <dom-module id="select-visualization-controllet">
 
@@ -65,7 +65,7 @@
                 height: 48px;
                 width: 172px;
                 padding: 12px;
-                background: #00BCD4;
+                background: #4A2E40;
                 color: #FFFFFF;
                 font-weight: 700;
 
@@ -77,7 +77,7 @@
             }
 
             paper-button:hover {
-                background-color: #00AABF;
+                background-color: #4A2E40;
 
                 box-shadow: 0px 8px 12px #888;
                 -webkit-box-shadow: 0px 8px 12px #888;
@@ -141,6 +141,22 @@
                     value : undefined
                 },
 
+				format : {
+                    type  : String,
+                    value : undefined
+                },
+				nodeID : {
+                    type  : String,
+                    value : undefined
+                },
+				datasetID : {
+                    type  : String,
+                    value : undefined
+                },
+				distributionID : {
+                    type  : String,
+                    value : undefined
+                },
                 data : {
                     type  : Object,
                     value : undefined
@@ -243,12 +259,15 @@
             },
 
             _selectDatalet : function(e){
+				var previousSelected = this.selectedDatalet;
+				//console.log(this.$.inputs.selectedOptions);
                 this.selectedDatalet = e.detail.datalet;
 
-                this.$.add_button.setAttribute("disabled", "true");
-                this.$.preview.eraseDatalet();
-                this.$.preview.eraseInfo();
-
+				if(previousSelected!=undefined){								
+					this.$.add_button.setAttribute("disabled", "true");
+					this.$.preview.eraseDatalet();
+					this.$.preview.eraseInfo();
+				}
                 if(this.selectedDatalet) {
                     this.$.selectedDatalet_request.url = this.deepUrl + e.detail.datalet + "-datalet";
                     this.$.selectedDatalet_request.generateRequest();
@@ -288,7 +307,8 @@
                     return;
                 }
 
-                this.params = {'data-url' : this.dataUrl};/*???*/
+                //this.params = {'data-url' : this.dataUrl};/*???*/
+				 this.params = {'data-url' : unescape(this.dataUrl)};
 
 //                this.selectedFields = ["pippi", "baudo"];
 
@@ -331,12 +351,15 @@
 //                ComponentService.deep_url = this.deepUrl;
 //                ComponentService.getComponent(dataletParams);
 
-                this.$.preview.loadDatalet(dataletParams);
+				if(this.selectedDatalet!=undefined){							   
+					this.$.preview.loadDatalet(dataletParams);
+					if(this.$.inputs.$.datalettitle.value != "")
+						this.$.add_button.removeAttribute("disabled");
+					else
+						this.$.add_button.setAttribute("disabled", "disabled");
+				}
 
-                if(this.$.inputs.$.datalettitle.value != "")
-                    this.$.add_button.removeAttribute("disabled");
-                else
-                    this.$.add_button.setAttribute("disabled", "disabled");
+               
             },
 
             _addDatalet : function(){
@@ -346,14 +369,21 @@
                 delete this.params["export_menu"];
 
                 var data = {
-                    dataUrl: this.dataUrl,
+                    dataUrl: unescape(this.dataUrl),
                     datalet: this.selectedDatalet+"-datalet",
                     fields: this.selectedFields,
                     params: this.params,
-                    staticData: staticData
+                    staticData: staticData,
+					format:this.format
                 }
 
-                this.fire('data-sevc-controllet.dataletCreated', {data : data});
+				var storeDatalet = {
+					nodeID: this.nodeID,
+					datasetID: this.datasetID,
+					distributionID: this.distributionID
+				}
+				
+                 this.fire('data-sevc-controllet.dataletCreated', {data : data, storeDatalet: storeDatalet});
             },
 
             _copy : function(o) {

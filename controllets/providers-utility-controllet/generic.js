@@ -1,19 +1,25 @@
 function generic_Provider () {}
-
+var isGEOJSON = false;
 generic_Provider.prototype.selectData = function(data) {
-    if(data.result && data.result.records)//ckan like
-        return data.result.records;
-
     if(data instanceof Array)
         return data;
     if(_isGEOJSON(data))
-        return [{"GEOJSON" : data}];
+	{
+		isGEOJSON=true;
+		//return [{"GEOJSON" : data}];
+		return data.features;
+	}
     if(data instanceof Object)
-        return [{"JSON" : data}];
+       return [{"JSON" : data}];
+	
 };
 
 generic_Provider.prototype.addLimit = function(url) {
     return url;
+};
+
+generic_Provider.prototype.isGEOJSON = function() {
+    return isGEOJSON;
 };
 
 function _isGEOJSON (data) {

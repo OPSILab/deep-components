@@ -5,7 +5,7 @@
 <link rel="import" href="../expert-query-controllet/expert-query-controllet.html" />
 
 <link rel="import" href="../providers-utility-controllet/providers-utility-controllet.html" />
-
+<link rel="import" href="../file-parser-controllet/file-parser-controllet.html" />
 <script type="text/javascript" src="../../alasql-utility/alasql.min.js"></script>
 <script type="text/javascript" src="../../alasql-utility/alasql-utility.js"></script>
 
@@ -14,7 +14,25 @@
 <dom-module id="select-data-controllet">
 
     <style is="custom-style">
+		/*SPINNER*/
+		paper-spinner {
+                height: 64px;
+                width: 64px;
 
+                --paper-spinner-stroke-width: 8px;
+
+                --paper-spinner-layer-1-color: #4A2E40;
+                --paper-spinner-layer-2-color: #F44336;;
+                --paper-spinner-layer-3-color: #FFEB3B;;
+                --paper-spinner-layer-4-color: #4CAF50;;
+        }
+	
+		#select_data_spinner {
+            width: 100%;
+            padding: 168px calc(50% - 32px);
+        }
+		/*SPINNER*/
+		
         #select_data_controllet_container {
             display: flex;
             flex-direction: row;
@@ -57,6 +75,9 @@
         <providers-utility-controllet></providers-utility-controllet>
 
         <div id="select_data_controllet_container">
+			<div id="select_data_spinner">
+				<paper-spinner id="select_spinner" active></paper-spinner>
+			</div>
             <div id="fields_container">
                 <select-fields-controllet id="select_fields"></select-fields-controllet>
             </div>
@@ -84,7 +105,22 @@
                     type  : String,
                     value : undefined
                 },
-
+				format : {
+                    type  : String,
+                    value : undefined
+                },
+				nodeID : {
+                    type  : String,
+                    value : undefined
+                },
+				datasetID : {
+                    type  : String,
+                    value : undefined
+                },
+				distributionID : {
+                    type  : String,
+                    value : undefined
+                },
                 data : {
                     type  : Object,
                     value : undefined
@@ -212,37 +248,77 @@
                 this.aggregators = e.detail.aggregators;
                 this.$.data_table.setData(this.getData());
             },
-
+			removeLoader: function() {
+                this.$.select_data_spinner.style.display = "none";
+				this.$.select_spinner.active = false;
+				//this.select_data_controllet_container.style.visible = "true";
+            },
             init : function() {
                 if(this.dataUrl) {
-
+					//this.$.select_data_controllet_container.style.visible = "false";
                     var that = this;
 
                     $.ajax({
-                        url: this.dataUrl,
-                        dataType: "json",
-                        success: function(data){
+                        url: "http://localhost:8080/FederationManager/api/v1/client/downloadFromUri?format="+this.format+"&url="+this.dataUrl,
+                        //dataType: "json",
+                        success: function(data, textStatus, xhr){
                             that.reset();
+							
+							var contentType=xhr.getResponseHeader('Content-Type');
+							var originalFileFormat=xhr.getResponseHeader('original-file-format');
+							var format = that.format;
+							var ultimateFormat = undefined;
+							
+							if(!(format==undefined || format==null || format==false)){
+								ultimateFormat = format;
+							}else if(!(originalFileFormat==undefined || originalFileFormat==null || originalFileFormat==false)){
+								ultimateFormat = originalFileFormat;
+							}else{
+								ultimateFormat = contentType;
+							}
 
+							var p = Object.create(fileParserFactory);
+							var parser = p.checkFile(ultimateFormat.toLowerCase());
+							data=parser.parse(data);
+							
+							that.removeLoader();
+							
+							if(data==''){
+								alert("Error while parsing file.")
+								return;
+							}
+							
                             var f = Object.create(providerFactory);
-                            var provider = f.getProvider(that.dataUrl);
-                            data = provider.selectData(data);
-
+							var provider = f.getProvider(that.dataUrl);
+				
+                            data = provider.selectData(data);							
+							
+							<!-- //check if dataset is a JSON Object and call function to select nested array to display -->
+							
+							//if(provider instanceof generic_Provider && !provider.isGEOJSON() && data instanceof Object){
+							//	that.selectJSONArray(data);
+							//}
                             var converter = new DataTypeConverter();
                             var result = converter.inferJsonDataType(data, ["*"]);
                             result = converter.cast(result);
+							console.log(result);
                             that.fields = utility_getFields(result.types);
                             data = result.dataset;
                             that.data = alasql_QUERY(data, that.fields, null, null, null);
 
                             that.$.select_fields.setFields(that.fields);
                             that.$.expert.setFields(that.fields);
+														
+							//that.removeLoader();
+							
 //                            that.$.expert.setSelectedFields(that.selectedFields);
 
-                            that.fire('data-ready', {ready : true});
+                            //that.fire('data-ready', {ready : true});
                         },
                         error: function(){
                             that.fire('data-ready', {ready : false});
+							that.removeLoader();
+							alert("Error retrieving data from url");
                         }
                     });
                 }
@@ -262,7 +338,6 @@
 //                    this.$.expert.setSelectedFields(this.selectedFields);
                 }
             },
-
             reset : function() {
                 this.filters = [];
                 this.aggregators = [];

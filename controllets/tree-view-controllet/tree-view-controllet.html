@@ -25,7 +25,7 @@
         }
 
         paper-item:not(.menu-trigger).iron-selected {
-            background-color: #2196F3;
+            background-color: #4A2E40;
             color: #FFFFFF;
         }
 
@@ -83,7 +83,8 @@
 
             listeners: {
                 'iron-select': '_onSelect',
-                'iron-deselect': '_onDeselect'
+                'iron-deselect': '_onDeselect',
+				'readyForDisplay':'_getNodeArrayPath'
             },
 
             ready : function() {
@@ -138,6 +139,7 @@
                         list.push(this._createTree(nodeName+","+child, node[child]));
 
                 return this._paper_submenu(nodeName, list);
+				//return this._paper_submenu(nodeName, list,"array");
             },
 
             _createTree : function(nodeName, node) {
@@ -150,6 +152,7 @@
                     for(var child in node)
                         list.push(this._createTree(nodeName+","+child, node[child]));
                     html = this._paper_submenu(nodeName, list);
+					//html = this._paper_submenu(nodeName, list,"object");
                 }
                 else if (node.constructor == Array){
                     var list  = new Array();
@@ -157,6 +160,7 @@
                         for(var child in node[0])
                             list.push(this._createTree(nodeName+","+child, node[0][child]));
                         html = this._paper_submenu(nodeName, list);
+						//html += this._paper_submenu(nodeName, list,"array");
                     }
                     else{
                         html = nodeName;
@@ -168,11 +172,22 @@
                 return html;
             },
 
-            _paper_submenu : function(str, list) {
+            _paper_submenu : function(str, list,type) {
                 var submenu = "<paper-submenu>";
-
-                submenu += "<paper-item class=\"menu-trigger\">"+this._getName(str)+"</paper-item>" + "<paper-menu id=\""+str+"\" class=\"menu-content sublist\" multi>";
-
+				if(type=="array"){
+				  <!-- submenu += "<paper-icon-item class=\"menu-trigger\">"+ -->
+					<!-- "<paper-icon-button icon=\"check\" >"+				   -->
+					<!-- "<paper-item  >"+ -->
+					 <!-- +this._getName(str)+				   -->
+					<!-- "</paper-item>"+ -->
+					
+					<!-- "</paper-icon-button>"+ -->
+				  <!-- "</paper-icon-item>"+ -->
+				  <!-- "<paper-menu id=\""+str+"\" class=\"menu-content sublist\" multi>"; -->
+                submenu += "<paper-item class=\"menu-trigger\" on-click=\"this._getNodeArrayPath()\" ><paper-icon-button icon=\"check\"></paper-icon-button> "+this._getName(str)+"</paper-item>" + "<paper-menu on-iron-activate=\"this._getNodeArrayPath()\" id=\""+str+"\" class=\"menu-content sublist\" multi>";
+				}else{
+				submenu += "<paper-item class=\"menu-trigger\">"+this._getName(str)+"</paper-item>" + "<paper-menu id=\""+str+"\" class=\"menu-content sublist\" multi>";
+                }
                 for(var i in list){
                     if(list[i].indexOf("paper-submenu") != -1)
                         submenu += list[i];
@@ -268,7 +283,11 @@
 
                     this.fire('tree-view-controllet_selected-fields', {fields: this.getFlatFields()});
                 }
-            }
+            },
+			_getNodeArrayPath : function(e) {
+				e.preventDefault();
+				console.log(e);
+			}
 
         });
 
