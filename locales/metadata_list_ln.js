@@ -103,6 +103,24 @@ metadata_ln["release_date_description_en"] = "Date of formal issuance.";
 metadata_ln["system_of_records_en"] = "System of Records";
 metadata_ln["system_of_records_description_en"] = "If the systems is designated as a system of records under the Privacy Act of 1974, provide the URL to the System of Records Notice related to this dataset.";
 
+//MORE
+//1
+metadata_ln["version_en"] = "Version";
+metadata_ln["version_description_en"] = "Dataset Version.";
+//2
+metadata_ln["maintainer_en"] = "Maintainer";
+metadata_ln["maintainer_description_en"] = "Maintainer.";
+//3
+metadata_ln["maintainer_email_en"] = "Maintainer e-mail";
+metadata_ln["maintainer_email_description_en"] = "Maintainer e-mail.";
+//4
+metadata_ln["author_en"] = "Author";
+metadata_ln["author_description_en"] = "Dataset Author.";
+//5
+metadata_ln["origin_en"] = "Origin";
+metadata_ln["origin_description_en"] = "Dataset Origin.";
+
+
 /******** IT ********/
 
 metadata_ln["metadata_it"] = "METADATA";
@@ -203,6 +221,23 @@ metadata_ln["release_date_description_it"] = "Data formale di rilascio.";
 //11
 metadata_ln["system_of_records_it"] = "Sistema di records";
 metadata_ln["system_of_records_description_it"] = "Se il sistema è strutturato come un sistema di records secondo il Privacy Act del 1974, fornire un URL al sistema di Record collegato a questo dataset.";
+
+//MORE
+//1
+metadata_ln["version_it"] = "Versione";
+metadata_ln["version_description_it"] = "Versione del dataset.";
+//2
+metadata_ln["maintainer_it"] = "Manutentore";
+metadata_ln["maintainer_description_it"] = "Manutentore.";
+//3
+metadata_ln["maintainer_email_it"] = "E-mail del Manutentore";
+metadata_ln["maintainer_email_description_it"] = "E-mail del Manutentore.";
+//4
+metadata_ln["author_it"] = "Autore";
+metadata_ln["author_description_it"] = "Autore del dataset.";
+//5
+metadata_ln["origin_it"] = "Origine";
+metadata_ln["origin_description_it"] = "Origine del dataset.";
 
 /******** FR ********/
 
@@ -310,6 +345,23 @@ metadata_ln["release_date_description_fr"] = "date de publication";
 metadata_ln["system_of_records_fr"] = "Référetiel des données";
 metadata_ln["system_of_records_description_fr"] = "référetiel des données";
 
+//MORE
+//1
+metadata_ln["version_fr"] = "Version";
+metadata_ln["version_description_fr"] = "Dataset Version.";
+//2
+metadata_ln["maintainer_fr"] = "Maintainer";
+metadata_ln["maintainer_description_fr"] = "Maintainer.";
+//3
+metadata_ln["maintainer_email_fr"] = "Maintainer e-mail";
+metadata_ln["maintainer_email_description_fr"] = "Maintainer e-mail.";
+//4
+metadata_ln["author_fr"] = "Author";
+metadata_ln["author_description_fr"] = "Dataset Author.";
+//5
+metadata_ln["origin_fr"] = "Origin";
+metadata_ln["origin_description_fr"] = "Dataset Origin.";
+
 /******** NL ********/
 
 metadata_ln["metadata_nl"] = "METADATA";
@@ -411,6 +463,23 @@ metadata_ln["release_date_description_nl"] = "release_date";
 metadata_ln["system_of_records_nl"] = "system_of_records";
 metadata_ln["system_of_records_description_nl"] = "system_of_records";
 
+//MORE
+//1
+metadata_ln["version_nl"] = "Version";
+metadata_ln["version_description_nl"] = "Dataset Version.";
+//2
+metadata_ln["maintainer_nl"] = "Maintainer";
+metadata_ln["maintainer_description_nl"] = "Maintainer.";
+//3
+metadata_ln["maintainer_email_nl"] = "Maintainer e-mail";
+metadata_ln["maintainer_email_description_nl"] = "Maintainer e-mail.";
+//4
+metadata_ln["author_nl"] = "Author";
+metadata_ln["author_description_nl"] = "Dataset Author.";
+//5
+metadata_ln["origin_nl"] = "Origin";
+metadata_ln["origin_description_nl"] = "Dataset Origin.";
+
 /******** es_ES ********/
 
 metadata_ln["metadata_es-ES"] = "METADATA";
@@ -506,8 +575,25 @@ metadata_ln["primary_IT_investment_UII_description_es-ES"] = "For linking a data
 metadata_ln["related_documents_es-ES"] = "Related Documents";
 metadata_ln["related_documents_description_es-ES"] = "Related documents such as technical information about a dataset, developer documentation, etc.";
 //10
-metadata_ln["release_date_es-ES"] = "Release_Date";
+metadata_ln["release_date_es-ES"] = "Release Date";
 metadata_ln["release_date_description_es-ES"] = "Date of formal issuance.";
 //11
 metadata_ln["system_of_records_es-ES"] = "System of Records";
 metadata_ln["system_of_records_description_es-ES"] = "If the systems is designated as a system of records under the Privacy Act of 1974, provide the URL to the System of Records Notice related to this dataset.";
+
+//MORE
+//1
+metadata_ln["version_es-ES"] = "Version";
+metadata_ln["version_description_es-ES"] = "Dataset Version.";
+//2
+metadata_ln["maintainer_es-ES"] = "Maintainer";
+metadata_ln["maintainer_description_es-ES"] = "Maintainer.";
+//3
+metadata_ln["maintainer_email_es-ES"] = "Maintainer e-mail";
+metadata_ln["maintainer_email_description_es-ES"] = "Maintainer e-mail.";
+//4
+metadata_ln["author_es-ES"] = "Author";
+metadata_ln["author_description_es-ES"] = "Dataset Author.";
+//5
+metadata_ln["origin_es-ES"] = "Origin";
+metadata_ln["origin_description_es-ES"] = "Dataset Origin.";

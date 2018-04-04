@@ -10,6 +10,7 @@
     <script src="../../../bower_components/webcomponentsjs/webcomponents-lite.min.js"></script>
 
     <link rel="import" href="../metadata-list-controllet.html" />
+    <link rel="import" href="../metadata-view-controllet.html" />
 
     <link rel="import" href="../../../bower_components/paper-material/paper-material.html" />
 </head>
@@ -29,7 +30,8 @@
 
 <paper-material id="container" elevation="5">
 
-    <metadata-list-controllet id="metadata_list"></metadata-list-controllet>
+    <!--<metadata-list-controllet id="metadata_list"></metadata-list-controllet>-->
+    <metadata-view-controllet id="metadata_list"></metadata-view-controllet>
 
 </paper-material>
 
@@ -37,6 +39,7 @@
 
     var metadata = [];
 
+    var MANDATORY = [{ name: "title", type: "CC_RF" }, { name: "description", type: "CC_RF" }, { name: "license", type: "CC_RAF" }, { name: "language", type: "EF" }];
     var CC_RF = {
         title:"The Best Dataset (O' Megl Dataset)",
         description:"Breve descrizione del meglio datasetto mai fatto!!! Bla bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla  bla bla",
@@ -73,7 +76,7 @@
         system_of_records:""
     };
 
-    metadata = {"CC_RF":CC_RF, "CC_RAF":CC_RAF, "EF":EF};
+    metadata = {"MANDATORY":MANDATORY, "CC_RF":CC_RF, "CC_RAF":CC_RAF, "EF":EF};
     metadata = JSON.stringify(metadata);
 
     var metadata_list = document.getElementById('metadata_list');
@@ -87,12 +90,12 @@
 //    }, 1000);
 
 
-    metadata_list.addEventListener("metadata-list-controllet_attached", function (e) {
+    metadata_list.addEventListener("metadata-view-controllet_attached", function (e) {
         metadata_list.setMetadata(metadata);
-        console.log("we");
+//        console.log("we");
     });
 
-    metadata_list.addEventListener("metadata-list-controllet_update-metadata", function (e) {
+    metadata_list.addEventListener("metadata-view-controllet_update-metadata", function (e) {
         console.log(e.detail.metadata);
         console.log(JSON.parse(e.detail.metadata));
     });

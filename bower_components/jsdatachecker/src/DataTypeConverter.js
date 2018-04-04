@@ -44,11 +44,14 @@ DataTypeConverter.SUBTYPES = {
     LATITUDE        :   { value: 1101, name: "LATITUDE" },
     LONGITUDE       :   { value: 1102, name: "LONGITUDE" },
 
-    DATETIMEYM     :   { value:  1200, name: "DATETIMEYM"},
-    DATETIMEYMD    :   { value:  1201, name: "DATETIMEYMD"},
-    DATETIMEDMY    :   { value:  1202, name: "DATETIMEDMY"},
-    DATETIMEMDY    :   { value:  1203, name: "DATETIMEMDY"},
-    DATETIMEXXY    :   { value:  1203, name: "DATETIMEXXY"}
+    DATETIMEYM      :   { value:  1200, name: "DATETIMEYM" },
+    DATETIMEYMD     :   { value:  1201, name: "DATETIMEYMD" },
+    DATETIMEDMY     :   { value:  1202, name: "DATETIMEDMY" },
+    DATETIMEMDY     :   { value:  1203, name: "DATETIMEMDY" },
+    DATETIMEXXY     :   { value:  1203, name: "DATETIMEXXY" },
+
+    NUMINTEGER      :   { value:  1300, name: "NUMINTEGER" },
+    NUMREAL         :   { value:  1300, name: "NUMREAL" }
 
     /*CODE        : { value: 2000, name: "CODE"},*/
 };
@@ -154,7 +157,8 @@ DataTypeConverter.prototype = (function () {
                 tkey = max.second.key;
 
             field.type = tkey;
-            field.typeConfidence = field._inferredTypes[max.first.key] / field.numOfItems;
+            field.typeConfidence = field._inferredTypes[field.type] / field.numOfItems;
+            // field.typeConfidence = field._inferredTypes[max.first.key] / field.numOfItems; //BUG? max.first.key
 
 
             //##########
@@ -172,6 +176,21 @@ DataTypeConverter.prototype = (function () {
                 var temp = max.first;
                 max.first = max.second;
                 max.second = temp;
+            }
+
+            //SUBTYPE special case, when two DATETIME formats have the same number of items, the system cannot
+            //determine the format.
+            if (max.second !== 'undefined' && max.second != null && max.second.key === DataTypeConverter.SUBTYPES.DATETIMEXXY.name) {
+                var counter = 0;
+                var valueToCompare = field._inferredSubTypes[max.first.key];
+                for (var _key in field._inferredSubTypes) {
+                    if (_key === DataTypeConverter.SUBTYPES.DATETIMEXXY.name) continue;
+                    if (field._inferredSubTypes[_key] == valueToCompare) counter++;
+                }//EndFor.
+                if (counter > 1) { //There are two formats that have two equal number of cells.
+                    max.first = max.second;
+                    max.second = null;
+                }
             }
 
             field.subtype = null;
@@ -269,6 +288,7 @@ DataTypeConverter.prototype = (function () {
         //var isnumber = DataTypesUtils.FilterFloat(value);
         var isnumber = DataTypesUtils.FilterNumber(value);
         if (isNaN(isnumber) !== true) {//It is a number.
+
             //If the number ranges from -90.0 to 90.0, the value is marked as Latitude.
             if (-90.0 <= isnumber && isnumber <= 90.0 && DataTypesUtils.DecimalPlaces(isnumber) >= 5)
                 return DataTypeConverter.SUBTYPES.GEOCOORDINATE;
@@ -280,6 +300,13 @@ DataTypeConverter.prototype = (function () {
             /*if (0.0 <= isnumber && isnumber <= 100.0)
                 if(/^(\+)?((0|([1-9][0-9]*))\.([0-9]+))$/ .test(value))
                     return DataTypeConverter.SUBTYPES.PERCENTAGE;*/
+
+            //Distinguish between INTEGER and REAL numbers (the discriminant is the presence of a dot or a comma.
+            var parts = (value+"").split(/(,|\.)/g);
+            if (parts.length > 1)
+                return DataTypeConverter.SUBTYPES.NUMREAL;
+            else
+                return DataTypeConverter.SUBTYPES.NUMINTEGER;
 
             return null;
         }
@@ -695,11 +722,39 @@ DataTypeConverter.prototype = (function () {
                         if (options.trackCellsForEachType) {
                             _descr3 = _capitalizeFirstLetter(JDC_LNG['key_seewrongrows'][options.language]) + ".";
 
+                            //At the end, this array contains keys with wrong types.
                             var keysWrongTypes =  Object.keys(fieldType._inferredTypes).filter(function(typekey) {
                                 return (typekey.indexOf("_cells") <0) && (fieldType._inferredTypes[typekey] > 0)
                                     && (typekey !== fieldType.type);
                             });
 
+                            //Loop through the wrong types to collect the cells.
+                            //Each type has an array with wrong cells.
+                            fieldType.cellsWithWarnings = [];
+                            for (var iKeyType=0; iKeyType<keysWrongTypes.length; iKeyType++) {
+                                var _keywrongtype = keysWrongTypes[iKeyType];
+                                var _wrongcells = fieldType._inferredTypes[_keywrongtype + "_cells"];
+                                if (typeof _wrongcells === 'undefined') continue;
+
+                                //Loop on the cells.
+                                for (var icell = 0; icell < _wrongcells.length; icell++) {
+                                    var _cell = _wrongcells[icell];
+
+                                    var _warningMessage = _capitalizeFirstLetter(JDC_LNG['key_declaretype'][options.language]) + ". ";
+                                    _warningMessage += _capitalizeFirstLetter(JDC_LNG['key_cellnotoftype'][options.language]) + ". ";
+                                    _warningMessage = _warningMessage.replace(/%COL_NAME/g, fieldType.label);
+                                    _warningMessage = _warningMessage.replace(/%COL_TYPE/g, fieldType.type);
+                                    _cell.warningMessage = _warningMessage;
+
+                                    //Build the warning message for the cell.
+                                    if (_keywrongtype === DataTypeConverter.TYPES.EMPTY.name)
+                                        _cell.warningMessage = _capitalizeFirstLetter(JDC_LNG['key_emptycell'][options.language]) + ".";
+
+                                    fieldType.cellsWithWarnings.push(_cell);
+                                }//EndFor.
+                            }//EndFor.
+
+                            //Build the message for the user.
                             for (var iKeyType=0; iKeyType<keysWrongTypes.length; iKeyType++) {
                                 var _keytype = keysWrongTypes[iKeyType];
                                 var _cells = fieldType._inferredTypes[_keytype + "_cells"];
@@ -707,14 +762,12 @@ DataTypeConverter.prototype = (function () {
 
                                 for (var icell = 0; icell < _cells.length; icell++) {
                                     var _cell = _cells[icell];
-                                    _LISTWRONGROS += (_cell.rowIndex + 1) + "(" + _keytype + ")" +
+                                    _LISTWRONGROS += (_cell.rowIndex + 2) + "(" + _keytype + ")" +
                                         (icell == _cells.length - 2 ? ", and " : "") +
                                         (icell < _cells.length - 2 ? ", " : "");
                                 }
                             }//EndForInfTypes.
                         }
-                        debugger;
-
 
                         var descr = _descr1 + " " + _descr2 + " " + _descr3;
                         descr = descr.replace(/%COL_NAME/g, fieldType.label);
@@ -728,6 +781,23 @@ DataTypeConverter.prototype = (function () {
                         var verb = (incorrect == 1) ? " value is" : " values are";
                         description += ", but " + incorrect + verb + " not a " + fieldType.type;*/
                     }
+
+                }
+
+                //Warning messages on the DATETIME formats.
+                if (fieldType.type === DataTypeConverter.TYPES.DATETIME.name) {
+                    if (fieldType.subtype === DataTypeConverter.SUBTYPES.DATETIMEXXY.name) {
+                        description += " " + _capitalizeFirstLetter(JDC_LNG['key_dateformatunknown'][options.language]) + ". ";
+                    } else {
+                        var valuesNotInRecognizedFormat = fieldType.numOfItems - fieldType._inferredSubTypes[fieldType.subtype] -
+                            (fieldType.hasOwnProperty(DataTypeConverter.SUBTYPES.DATETIMEXXY.name)?
+                                fieldType._inferredSubTypes[DataTypeConverter.SUBTYPES.DATETIMEXXY.name] : 0);
+                        if (valuesNotInRecognizedFormat > 0) {
+                            var descr = _capitalizeFirstLetter(JDC_LNG['key_datenotinformat'][options.language]);
+                            descr = descr.replace(/%COL_NUMDATENOTINFORMAT/g, valuesNotInRecognizedFormat);
+                            description += descr;
+                        }
+                    }
                 }
 
                 var descr = "";
@@ -736,10 +806,16 @@ DataTypeConverter.prototype = (function () {
                 else if (fieldType.totalNullValues > 1 )
                     descr = _capitalizeFirstLetter(JDC_LNG['key_emptyvalue_plural'][options.language]) + ".";
 
-                descr = descr.replace(/%COL_NAME/g, fieldType.label);
-                descr = descr.replace(/%COL_TYPE/g, fieldType.type);
-                descr = descr.replace(/%COL_NULLVALUES/g, fieldType.totalNullValues);
+                //descr = descr.replace(/%COL_NAME/g, fieldType.label);
+                //descr = descr.replace(/%COL_TYPE/g, fieldType.type);
+                //descr = descr.replace(/%COL_NULLVALUES/g, fieldType.totalNullValues);
                 description = description + " " + descr;
+
+                //Replaces keyword in the warning descriptions.
+                description = description.replace(/%COL_NAME/g, fieldType.label);
+                description = description.replace(/%COL_TYPE/g, fieldType.type);
+                description = description.replace(/%COL_SUBTYPE/g, fieldType.subtypeLabel);
+                description = description.replace(/%COL_NULLVALUES/g, fieldType.totalNullValues);
 
                 /*if (fieldType.totalNullValues > 0) {
                     var descr = _capitalizeFirstLetter(JDC_LNG['key_declaretype'][options.language]) + ".";

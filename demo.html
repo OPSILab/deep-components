@@ -29,8 +29,6 @@
         {
             var dataletHTML = "";
 
-			console.log(e.detail.storeDatalet);
-			
             dataletHTML = '<' + e.detail.data.datalet;
 
 			var title="";
@@ -56,20 +54,16 @@
             }
 
             dataletHTML += ' fields=\'' + JSON.stringify(e.detail.data.fields) + '\'';
-			
-            var format=e.detail.data.format;
-            if(format!=undefined &&  format.toLowerCase()=='csv'){
-                dataletHTML += ' data=\''   + e.detail.data.staticData + '\'';
-            }
-            dataletHTML += ' format=\'' +format + '\'';
+            //dataletHTML += ' data=\''   + e.detail.data.staticData + '\'>';
             dataletHTML += '>';
             dataletHTML += '</'+e.detail.data.datalet+'>';
 			
-            var dataletImport   = '\<script type="text/javascript" src="https://cdn.jsdelivr.net/webcomponentsjs/0.7.16/webcomponents-lite.min.js"\>\<\/script\>\n' +
+            //var dataletImport   = '\<script type="text/javascript" src="https://cdn.jsdelivr.net/webcomponentsjs/0.7.16/webcomponents-lite.min.js"\>\<\/script\>\n' +
+
+            var dataletImport   = '\<script type="text/javascript" src="http://localhost/deep/deep-components/bower_components/webcomponentsjs/webcomponents-lite.min.js"\>\<\/script\>\n' +
                                   '\<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"\>\<\/script\>\n' +
                                   '<!-- REMOVE THE PREVIOUS SCRIPT TAGS IF YOUR PAGE ALREADY USES JQUERY AND POLYFILL LIBRARIES  -->\n';
 
-            //var dataletLink     = '<link rel="import" href="http://deep.routetopa.eu/deep_1_7/COMPONENTS/datalets/'+e.detail.data.datalet+'/'+e.detail.data.datalet+'.html" /> \n';
 			var dataletLink     = '<link rel="import" href="http://localhost/deep/deep-components/datalets/'+e.detail.data.datalet+'/'+e.detail.data.datalet+'.html" /> \n';
 
             editAreaLoader.setValue("text_area", dataletImport+dataletLink+dataletHTML);
