@@ -54,30 +54,27 @@ var AjaxJsonAlasqlBehavior = {
      * @method requestData
      */
     requestData: function(){
-
-       var comp = this;
-		console.log(encodeURIComponent(this._component.dataUrl));
-
-        $.ajax({
-            url: 'http://localhost:8080/FederationManager/api/v1/client/downloadFromUri?url='+encodeURIComponent(this._component.dataUrl),
-            //dataType: "json",
-            success: function(e,textStatus,xhr){
-				console.log("success");				
-				var contentType="";
-				 
-						   
-				if(comp._component.format==undefined){
-					contentType=xhr.getResponseHeader('Content-Type');	
-				}else{
-				 
-			  
-								
-					contentType=comp._component.format.toLowerCase();
-				}						
-                comp.handleResponse(e,contentType);
-				
-            }
-        });
+    	   var comp = this;
+    	   $.ajax({
+               url: getODFUrl()+'Idra/api/v1/client/downloadFromUri?url='+encodeURIComponent(this._component.dataUrl),
+               //dataType: "json",
+               success: function(e,textStatus,xhr){
+   				console.log("success");				
+   				var contentType="";
+   				 
+   						   
+   				if(comp._component.format==undefined){
+   					contentType=xhr.getResponseHeader('Content-Type');	
+   				}else{
+   				 
+   			  
+   								
+   					contentType=comp._component.format.toLowerCase();
+   				}						
+                   comp.handleResponse(e,contentType);
+   				
+               }
+           });
     },
 
     /**

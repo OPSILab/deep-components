@@ -72,7 +72,7 @@ Example:
     <link rel="stylesheet" href="leafletsjs/marker_cluster/dist/MarkerCluster.css" />
     <link rel="stylesheet" href="leafletsjs/marker_cluster/dist/MarkerCluster.Default.css" />
     <script src="leafletsjs/marker_cluster/dist/leaflet.markercluster.js"></script>
-
+	<script type="text/javascript" src="../../configuration.js"></script>
     <script>
 
         var leafletjsgeojsonBehavior = {
@@ -99,7 +99,7 @@ Example:
 
 
                 //L.Icon.Default.imagePath = 'http://services.routetopa.eu/DEEalerProvider/COMPONENTS/datalets/leafletjs-datalet/leafletsjs/images';
-				L.Icon.Default.imagePath = 'http://localhost/deep/deep-components/datalets/leafletjs-datalet/leafletsjs/images/';
+				L.Icon.Default.imagePath = getDeepBaseUrl()+'deep-components/datalets/leafletjs-datalet/leafletsjs/images/';
 
                 //var coordinates = [];
                 //var coordinates_index  = 0;

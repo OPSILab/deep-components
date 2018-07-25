@@ -7,7 +7,7 @@
 
     <script type="text/javascript" src="datalets/shared_js/jquery-1.11.2.min.js"></script>
     <script type="text/javascript" src="bower_components/webcomponentsjs/webcomponents-lite.min.js"></script>
-
+	<script type="text/javascript" src="configuration.js"></script>
     <link rel="import"  href="bower_components/iron-component-page/iron-component-page.html">
     <link rel="import"  href="bower_components/paper-icon-button/paper-icon-button.html">
 
@@ -60,11 +60,11 @@
 			
             //var dataletImport   = '\<script type="text/javascript" src="https://cdn.jsdelivr.net/webcomponentsjs/0.7.16/webcomponents-lite.min.js"\>\<\/script\>\n' +
 
-            var dataletImport   = '\<script type="text/javascript" src="http://localhost/deep/deep-components/bower_components/webcomponentsjs/webcomponents-lite.min.js"\>\<\/script\>\n' +
+            var dataletImport   = '\<script type="text/javascript" src="'+getDeepBaseUrl()+'deep-components/bower_components/webcomponentsjs/webcomponents-lite.min.js"\>\<\/script\>\n' +
                                   '\<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"\>\<\/script\>\n' +
                                   '<!-- REMOVE THE PREVIOUS SCRIPT TAGS IF YOUR PAGE ALREADY USES JQUERY AND POLYFILL LIBRARIES  -->\n';
 
-			var dataletLink     = '<link rel="import" href="http://localhost/deep/deep-components/datalets/'+e.detail.data.datalet+'/'+e.detail.data.datalet+'.html" /> \n';
+			var dataletLink     = '<link rel="import" href="'+getDeepBaseUrl()+'deep-components/datalets/'+e.detail.data.datalet+'/'+e.detail.data.datalet+'.html" /> \n';
 
             editAreaLoader.setValue("text_area", dataletImport+dataletLink+dataletHTML);
 			document.getElementById('text_area_container').style.display = "block";
@@ -72,7 +72,7 @@
 			var storeDatalet = e.detail.storeDatalet;
 			
 			$.ajax({
-				url: "http://localhost:8080/FederationManager/api/v1/client/node/"+storeDatalet.nodeID+"/dataset/"+storeDatalet.datasetID+"/distribution/"+storeDatalet.distributionID+"/createDatalet",
+				url: getODFUrl()+"Idra/api/v1/client/catalogues/"+storeDatalet.nodeID+"/dataset/"+storeDatalet.datasetID+"/distribution/"+storeDatalet.distributionID+"/createDatalet",
 				type: "POST",
 				//dataType:"json",
 				contentType: "application/json",

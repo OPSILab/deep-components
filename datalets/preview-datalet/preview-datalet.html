@@ -1,5 +1,5 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-
+<script type="text/javascript" src="../../configuration.js"></script>
 <dom-module id="preview-datalet">
     <template>
 
@@ -218,7 +218,7 @@
                         '<!-- REMOVE THE PREVIOUS SCRIPT TAGS IF YOUR PAGE ALREADY USES JQUERY AND POLYFILL LIBRARIES  -->\n';
 
 //                var dataletLink = '<link rel="import" href="http://172.16.15.128/Datalet-Ecosystem-Provider/COMPONENTS/datalets/'+component+'/'+component+'.html" /> \n';
-                var dataletLink = '<link rel="import" href="http://localhost/deep/deep-components/datalets/'+component+'/'+component+'.html" /> \n';
+                var dataletLink = '<link rel="import" href="'+getDeepBaseUrl()+'deep-components/datalets/'+component+'/'+component+'.html" /> \n';
 
                 var div = document.createElement('div');
                 div.innerHTML = '<div class="overlay" id="overlay">' +

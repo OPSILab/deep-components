@@ -33,7 +33,7 @@
 
 <link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
 <link rel="import" href="../../bower_components/paper-spinner/paper-spinner-lite.html">
-
+<script type="text/javascript" src="../../configuration.js"></script>
 <!--
 The `base-datalet` is the base component that includes datalet footer (with information about dataset domain and ROUTE-TO-PA project).
 Base datalet includes polymer.html and the BaseDataletBehaviors javascript file that define the datalet workcycle and the datalet base properties : dataUrl, fields and data.
@@ -796,7 +796,7 @@ Example :
                         '\<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"\>\<\/script\>\n' +
                         '<!-- REMOVE THE PREVIOUS SCRIPT TAGS IF YOUR PAGE ALREADY USES JQUERY AND POLYFILL LIBRARIES  -->\n';
 
-                var dataletLink = '<link rel="import" href="http://localhost/deep/deep-components/datalets/'+parent.is+'/'+parent.is+'.html" /> \n';
+                var dataletLink = '<link rel="import" href="'+getDeepBaseUrl()+'deep-components/datalets/'+parent.is+'/'+parent.is+'.html" /> \n';
 
                 var div = document.createElement('div');
                 div.innerHTML = '<div class="overlay" id="overlay">' +
@@ -837,7 +837,7 @@ Example :
 
                 //xhr.open('POST', 'http://172.16.15.77/DEEalerProvider/DEEP/export/export-datalet-as-img', true);
                 //xhr.open('POST', 'http://stage.routetopa.eu/deep/DEEP/export/export-datalet-as-img', true);
-                xhr.open('POST', 'http://localhost/deep/deep/export/export-datalet-as-img', true);
+                xhr.open('POST', getDeepBaseUrl()+'deep/export/export-datalet-as-img', true);
                 xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
                 var post = 'svg_data=' + window.encodeURIComponent(svg);
@@ -866,7 +866,7 @@ Example :
                     data: {"post_id" : post_id, "datalet_id" : datalet_id, "is_public_room" : isPublicRoom},
                     dataType: "json",
                     success: function(e){
-                        xhr.open('POST', 'http://localhost/deep/deep/export/export-datalet-as-rtf', true);
+                        xhr.open('POST', getDeepBaseUrl()+'/deep/export/export-datalet-as-rtf', true);
                         xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
                         var post = 'svg_data=' + window.encodeURIComponent(svg) + '&datalet=' + parent.is + '&dataset=' + t.$.base_datalet_link.getAttribute("href");
@@ -986,7 +986,7 @@ Example :
                         '<!-- REMOVE THE PREVIOUS SCRIPT TAGS IF YOUR PAGE ALREADY USES JQUERY AND POLYFILL LIBRARIES  -->\n';
 
 //                var dataletLink = '<link rel="import" href="http://172.16.15.128/Datalet-Ecosystem-Provider/COMPONENTS/datalets/'+parent.is+'/'+parent.is+'.html" /> \n';
-                var dataletLink = '<link rel="import" href="http://localhost/deep/deep-components/datalets/'+parent.is+'/'+parent.is+'.html" /> \n';
+                var dataletLink = '<link rel="import" href="'+getDeepBaseUrl()+'deep-components/datalets/'+parent.is+'/'+parent.is+'.html" /> \n';
 
                 var div = document.createElement('div');
                 div.innerHTML = '<div class="overlay" id="overlay">' +
