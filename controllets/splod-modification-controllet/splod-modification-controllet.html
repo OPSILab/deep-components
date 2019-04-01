@@ -12,7 +12,7 @@
 <script src="../shared_js/perfect-scrollbar/js/min/perfect-scrollbar.jquery.min.js"></script>
 <link rel="stylesheet" href="../shared_js/perfect-scrollbar/css/perfect-scrollbar.min.css">
 
-<dom-module id="splod-visualization-controllet" name="splod-visualization-controllet">
+<dom-module id="splod-modification-controllet" name="splod-modification-controllet">
 
     <template>
 
@@ -33,7 +33,8 @@
 
             <neon-animatable>
 
-                <select-visualization-controllet id="select_visualization" deep-url={{deepUrl}} datalets-list-url={{dataletsListUrl}}></select-visualization-controllet>
+                <select-visualization-controllet id="select_visualization" 
+                deep-url={{deepUrl}} datalets-list-url={{dataletsListUrl}} data-url={{dataUrl}} preselected-datalet={{selectedDatalet}} datalet-preset={{dataletPreset}}></select-visualization-controllet>
 
             </neon-animatable>
 
@@ -45,16 +46,17 @@
 
         Polymer({
 
-            is : 'splod-visualization-controllet',
+            is : 'splod-modification-controllet',
 
             listeners : {
+                'data-ready': '_preload',
+                'select-dataset-controllet_data-url' : '_enableDataReload',
+
                 'page-slider-controllet_selected' : '_updateSlider',
-                'select-dataset-controllet_data-url' : '_allowSecondStep',
                 'select-fields-controllet_selected-fields' : '_allowThirdStep',
                 'filters-controllet_filters': '_allowThirdStep',
                 'aggregators-controllet_aggregators': '_allowThirdStep',
-                'data-ready': '_dataReady',
-				'remove-dataset-controllet_data-url': '_denySecondStep'			
+				'remove-dataset-controllet_data-url': '_denySecondStep',
             },
 
             properties : {
@@ -82,19 +84,66 @@
                 localization : {
                     type : String,
                     value : "en"
-                }
+                },
+
+                dataletPreset : {
+                    type  : Object,
+                    value : []
+                },
+
+                dataUrl : {
+                    type  : String,
+                    value : undefined
+                },
+
+                selectedDatalet : {
+                    type  : String,
+                    value : undefined
+                },
+
+                selectedFields : {
+                    type  : Array,
+                    value : []
+                },
+
 
             },
 
             ready : function(){
                 ln["localization"] = this.localization;
+
+                this.$.select_data.dataUrl = this.dataletPreset["data-url"];
+                this.$.select_data.init();
+
+                this.$.select_visualization.dataUrl = this.dataletPreset["data-url"];
+                this.$.select_visualization.init();
+
+            },
+
+            _preload : function(){
+                this.$.select_data.setSelectedFields(this.dataletPreset["selectedfields"]);
+                this.$.select_data.setFilters(JSON.parse(this.dataletPreset["filters"]));
+                this.$.select_data.setAggregators(JSON.parse(this.dataletPreset["aggregators"]));     
+
+                this.unlisten(this, 'data-ready', '_preload');
+                this.listen(this, 'data-ready', '_dataReady');
+            },
+
+            _enableDataReload : function(){
+                this.unlisten(this, 'select-dataset-controllet_data-url', '_enableDataReload');
+                this.listen(this, 'select-dataset-controllet_data-url', '_allowSecondStep');
+            },
+            
+            _dataReady : function(e){
+                if(e.detail.ready) {
+                    this.$.slider.chevronRight(true);
+                }
             },
 
             _updateSlider : function(e){
                 switch (e.detail.selected) {
                     case 0:
-                        //this.$.slider.setTitle(ln["slide1Title_" + this.localization], ln["slide1Subtitle_" + this.localization]);
-						this.$.slider.setTitle('CREATE DATASET', 'Select an endpoint and create your dataset.');
+						this.$.slider.setTitle(ln["SPLODslide1Title_" + this.localization], ln["SPLODslide1Subtitle_" + this.localization]);
 
                         this.$.slider.chevronLeft("invisible");
                         this.$.slider.chevronRight(false);
@@ -106,10 +155,16 @@
                         this.$.slider.setTitle(ln["slide2Title_" + this.localization], ln["slide2Subtitle_" + this.localization]);
 
                         this.$.slider.chevronLeft(true);
-                        this.$.slider.chevronRight(false);
+
+                        if(this.$.select_data.$.data_table.data.length > 0)
+                            this.$.slider.chevronRight(true);
+                        else
+                            this.$.slider.chevronRight(false);
 
                         if(this.$.slider.getPrevSelected() == 2)
                             this.$.slider.chevronRight(true);
+
+                        this.$.select_data.$.data_table._resize();
 
                         this._setContext();
 
@@ -119,57 +174,38 @@
 
                         this.$.slider.chevronLeft(true);
                         this.$.slider.chevronRight("invisible");
+
+                        this.$.select_visualization.preselect();
                 }
             },
 
             _setContext : function()
             {
-                this.$.select_visualization.context = {'querylogicmap':queryLogicMap,
-                                                       'rootlistquerylogicmap':rootListQueryLogicMap,
-                                                       'elementonfocus':elementOnFocus,
-                                                       'systemendpoint':systemEndpoint,
-                                                       'systemgraph':systemGraph,
-                                                       'systemqueryexecutor':systemQueryExecutor,
-                                                       'systemlang':systemLang};
+                this.$.select_visualization.context = {'querylogicmap':JSON.stringify(queryLogicMap),
+                    'rootlistquerylogicmap':JSON.stringify(rootListQueryLogicMap),
+                    'elementonfocus':elementOnFocus,
+                    'systemendpoint':systemEndpoint,
+                    'systemgraph':systemGraph,
+                    'systemqueryexecutor':systemQueryExecutor,
+                    'systemlang':systemLang};
             },
-
-            _allowSecondStep : function(e){
-			console.log(e.detail);
+            
+            _allowSecondStep : function(e){               
                 this.$.slider.chevronRight(false);
 
-                /*
-				var f = Object.create(providerFactory);
-                var provider = f.getProvider(e.detail.url);
-                var dataUrl = provider.addLimit(e.detail.url);
-				*/
-                //this.$.select_data.dataUrl = dataUrl;
-				
-				//SPLOD : add
-				//this.$.select_data.dataUrl = e.detail.endpoint;
-				this.$.select_data.data = e.detail.data;
-				
+                this.$.select_data.dataUrl = e.detail.dataUrl;
+                this.$.select_data.data = e.detail.data;
                 this.$.select_data.init();
-                //this.$.select_visualization.dataUrl = dataUrl;
-				//this.$.select_visualization.dataUrl = e.detail.endpoint;
+                
                 this.$.select_visualization.dataUrl = e.detail.dataUrl;
                 this.$.select_visualization.init();
-				this.fire('data-ready', {ready: true});
+
+                this.fire('data-ready', {ready: true});
+                
             },
-
-			_denySecondStep : function(e){
-				this.$.slider.chevronRight(false);
-			},
-			
-            _dataReady : function(e){
-                if(e.detail.ready) {
-                    this.$.slider.chevronRight(true);
-                    //this.$.select_dataset.$.selected_url.invalid = false;
-                }
-                /*else
-                    this.$.select_dataset.$.selected_url.invalid = true;
-				*/
-
-                //this.$.select_dataset.showDatasetInfo();
+            
+            _denySecondStep : function(e){
+                this.$.slider.chevronRight(false);
             },
 
             _allowThirdStep : function(){
@@ -186,6 +222,12 @@
                     this.$.select_visualization.setData(data);
                     this.$.slider.chevronRight(true);
                 }
+
+                this.listen(this, 'select-fields-controllet_selected-fields', '_emptyDataVisualization');
+            },
+
+            _emptyDataVisualization : function(){
+                this.$.select_visualization.reset()
             }
 
         });

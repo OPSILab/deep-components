@@ -374,6 +374,7 @@
                     fields: this.selectedFields,
                     params: this.params,
                     staticData: staticData,
+                    context: this.context,
 					format:this.format
                 }
 
@@ -403,7 +404,17 @@
                 $("#items_vslider_container").height(h);
                 $("#select_inputs_container").height(h);
                 $("#datalet_preview_container").height(h);
-            }
+            },
+
+            reset : function(){
+                this.$.preview.eraseDatalet();
+                this.$.preview.eraseInfo();
+
+                this.dataletType = undefined;
+                this.$.inputs._reset();
+
+                this.preselectedDatalet = null;
+            },
 
         });
 
