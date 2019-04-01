@@ -11,20 +11,27 @@
     <link rel="import"  href="bower_components/iron-component-page/iron-component-page.html">
     <link rel="import"  href="bower_components/paper-icon-button/paper-icon-button.html">
 
-    <script type="text/javascript" src="docs/js/editarea_0_8_2/edit_area/edit_area_full.js"></script>
+<!--     <script type="text/javascript" src="docs/js/editarea_0_8_2/edit_area/edit_area_full.js"></script> -->
 
     <script type="text/javascript">
         $(document).ready(function () {
 		document.getElementById('controllet_iframe').src = "controllet_odf.html" + window.location.search;																							
-            editAreaLoader.init({
-                id : "text_area",         // textarea id
-                syntax: "html",           // syntax to be uses for highgliting
-                start_highlight: true,    // to display with highlight mode on start-up
-                replace_tab_by_spaces: 4,
-                isEditable : false
-            });
+//             editAreaLoader.init({
+//                 id : "text_area",         // textarea id
+//                 syntax: "html",           // syntax to be uses for highgliting
+//                 start_highlight: true,    // to display with highlight mode on start-up
+//                 replace_tab_by_spaces: 4,
+//                 isEditable : false
+//             });
         });
 
+        var copyToClipboard = function(){
+        	
+      		var copyText = document.getElementById("export_html_textarea");
+        	copyText.select();
+        	document.execCommand("copy");
+        }
+        
         var createHTML = function(e)
         {
             var dataletHTML = "";
@@ -54,7 +61,12 @@
             }
 
             dataletHTML += ' fields=\'' + JSON.stringify(e.detail.data.fields) + '\'';
-            //dataletHTML += ' data=\''   + e.detail.data.staticData + '\'>';
+			
+            var format=e.detail.data.format;
+            if(format!=undefined &&  format.toLowerCase()=='csv'){
+                dataletHTML += ' data=\''   + e.detail.data.staticData + '\'';
+            }
+            dataletHTML += ' format=\'' +format + '\'';
             dataletHTML += '>';
             dataletHTML += '</'+e.detail.data.datalet+'>';
 			
@@ -66,9 +78,10 @@
 
 			var dataletLink     = '<link rel="import" href="'+getDeepBaseUrl()+'deep-components/datalets/'+e.detail.data.datalet+'/'+e.detail.data.datalet+'.html" /> \n';
 
-            editAreaLoader.setValue("text_area", dataletImport+dataletLink+dataletHTML);
-			document.getElementById('text_area_container').style.display = "block";
-			
+			$(".export_html_textarea").val(dataletImport+dataletLink+dataletHTML);
+            //editAreaLoader.setValue("text_area", dataletImport+dataletLink+dataletHTML);
+			//Polymer.dom(this.root).appendChild(div);
+		
 			var storeDatalet = e.detail.storeDatalet;
 			
 			$.ajax({
@@ -82,10 +95,13 @@
 					"description":description
 					}),
 				success: function(data, textStatus, xhr){
-					alert("OK");
+		            document.getElementById('text_area_container').style.display = "block";
+// 		            $("#add_button").attr("disabled", "disabled");
+					//document.getElementById('controllet_iframe').contentWindow.document.getElementById('add_button').disable=true;
 				},
-				error:function(){
-					alert("PROBLEM");
+				error:function(data, textStatus,xhr){
+					$("#errorMess").text("Unable to create datalet!");
+					document.getElementById('error_area_container').style.display = "block";
 				}
 			});
 			
@@ -169,6 +185,51 @@
             padding: 8px;
         }
 
+			/* EXPORT TO HTML */
+            .export_html_textarea {
+                margin-top: 36px;
+                height: 200px;
+            }
+
+            .button-close {
+                display: inline-block;
+                width: 16px;
+                height: 16px;
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                cursor: pointer;
+                background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAAowAAAKMB8MeazgAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAB5SURBVDiNrZPRCcAwCEQfnUiySAZuF8kSWeH6Yz8KrQZMQAicJ+epAB0YwAmYJKIADLic0/GPPCbQAnLznCd/4NWUFfkgy1VjH8CryA95ApYltAiTRCZxpuoW+gz9WXE6NPeg+ra1UDIxGlWEObe4SGxY5fIxlc75Bkt9V4JS7KWJAAAAAElFTkSuQmCC59ef34356faa7edebc7ed5432ddb673d');
+            }
+
+            .overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.6);
+                z-index: 1000000;
+            }
+
+            .modal-content {
+                padding: 20px 30px;
+                width: 600px;
+                position: relative;
+                min-height: 300px;
+                margin: 5% auto 0;
+                background: #fff;
+            }
+            
+            .error-modal-content {
+                padding: 20px 30px;
+                width: 600px;
+                position: relative;
+                height: 100px;
+                margin: 5% auto 0;
+                background: #fff;
+            }
+            /* EXPORT TO HTML */
     </style>
 
 </head>
@@ -192,9 +253,32 @@
             <iframe id="controllet_iframe" frameborder="0" src="./iframe_controllet.html"></iframe>
         </div>
 
-        <div id="text_area_container" style="display:none">
-            <textarea id="text_area">Copy and paste this code to inject the datalet in you page.</textarea>
+<!--         <div id="text_area_container" style="display:none"> -->
+    <!--  <textarea id="text_area">Copy and paste this code to inject the datalet in you page.</textarea> -->
+<!--         </div> -->
+
+	<div id="text_area_container" style="display:none">
+            <div class="overlay" id="overlay">
+               <div class="modal-content">
+               <div style="display:inline-block"> <h5 style="margin:0px">Datalet Created!</h5><span class="button-close" onclick="document.getElementById('text_area_container').style.display = 'none'"></span></div>
+               <div class="modal-body">
+               <p>Embed this html snippet into your web site.</p>
+               <textarea style="width:100%;margin:0px" class="export_html_textarea" id="export_html_textarea"></textarea>
+               </div>
+               <div class="modal-footer">
+               	 <button onclick="copyToClipboard()">Copy</button>
+               </div>
+               </div></div>
         </div>
+        
+    <div id="error_area_container" style="display:none">
+            <div class="overlay" id="errorOverlay">
+               <div class="error-modal-content">
+               <div style="display:inline-block"> <h5 style="margin:0px">Error in Datalet creation!</h5><span class="button-close" onclick="document.getElementById('error_area_container').style.display = 'none'"></span></div>
+               <div><p id="errorMess"></p></div>
+               </div></div>
+        </div>
+        
     </div>
 
 </body>
