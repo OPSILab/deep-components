@@ -33,17 +33,17 @@ WMS_Provider.prototype.getHTMLFormattedMetadata = function (detail) {
     var html = '';
 
     if (layers && info) {
-        html += '<b>Service Name:</b> <b style="color: #4A2E40;">' + info.Service.Title + '</b><br>';
+        html += '<b>Service Name:</b> <b style="color: #00b4ff;">' + info.Service.Title + '</b><br>';
         html += '<b>Service Description:</b> <b>' + info.Service.Abstract + '</b><br>';
         html += '<b>Service Version:</b> <b>' + info.Version + '</b><br>';
-        html += '<div style="height: 1px; background: #4A2E40; margin: 12px 0;"></div>';
+        html += '<div style="height: 1px; background: #00b4ff; margin: 12px 0;"></div>';
 
         html += '<b>Organization:</b> ' + info.Service.ContactInformation.ContactPersonPrimary.ContactOrganization + '<br>';
 
         if (this.parsedUrl.params.LAYERS){
             var ln = provider.parsedUrl.params.LAYERS ? (/(?:\w+:)?(\w+)/gi).exec(provider.parsedUrl.params.LAYERS)[1] : null;
             layers.filter(function(l){return l.Name==ln}).forEach(function(l,i){
-                html += '<b>Resource Name:</b> <b style="color: #4A2E40;">' + l.Title + '</b><br>';
+                html += '<b>Resource Name:</b> <b style="color: #00b4ff;">' + l.Title + '</b><br>';
             })
         }else{
             html += '<b>Layers:</b> ' + layers.length + '<br>';

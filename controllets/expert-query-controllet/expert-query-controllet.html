@@ -102,8 +102,8 @@
                 height: 48px;
                 width: 48px;
                 padding: 8px;
-                color: #4A2E40;
-                --paper-icon-button-ink-color: #4A2E40;
+                color: #00b4ff;
+                --paper-icon-button-ink-color: #00b4ff;
             }
 
             paper-icon-button.disabled{
@@ -131,7 +131,7 @@
             paper-tab {
                 font-weight: 700;
                 border-right: 2px solid #FFFFFF;
-                /*--paper-tab-ink: #4A2E40;*/
+                /*--paper-tab-ink: #00b4ff;*/
             }
 
             paper-tab:nth-child(1) {
@@ -140,11 +140,11 @@
 
             paper-tab.iron-selected {
                 color: #FFFFFF;
-                background: #4A2E40;;
+                background: #00b4ff;;
             }
 
             paper-tab:not(.iron-selected):hover {
-                color: #4A2E40;
+                color: #00b4ff;
             }
 
             neon-animatable {
@@ -357,11 +357,11 @@
             _updateQuery : function() {
                 if(this.selectedFields.length)
                     this.$.query_container.innerHTML = alasql_QUERY_string(this.selectedFields, this.filters, this.aggregators, null)
-                            .replace('SELECT', '<span style="color:#4A2E40; font-weight: 700;">SELECT</span>')
-//                            .replace('FROM ?', '<br><br><span style="color:#4A2E40; font-weight: 700;">FROM</span> dataset')
+                            .replace('SELECT', '<span style="color:#00b4ff; font-weight: 700;">SELECT</span>')
+//                            .replace('FROM ?', '<br><br><span style="color:#00b4ff; font-weight: 700;">FROM</span> dataset')
                             .replace('FROM ?', '')
-                            .replace('WHERE', '<br><br><span style="color:#4A2E40; font-weight: 700;">WHERE</span>')
-                            .replace('GROUP BY', '<br><br><span style="color:#4A2E40; font-weight: 700;">GROUP BY</span>')
+                            .replace('WHERE', '<br><br><span style="color:#00b4ff; font-weight: 700;">WHERE</span>')
+                            .replace('GROUP BY', '<br><br><span style="color:#00b4ff; font-weight: 700;">GROUP BY</span>')
                             .replace(/\[/g, '')
                             .replace(/\]/g, '')
                             .replace(/`/g, '');
