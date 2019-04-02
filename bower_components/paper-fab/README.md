@@ -30,7 +30,7 @@ See `iron-iconset` for more information about how to use a custom icon set.
       
       paper-fab[label] {
         font-size: 20px;
-        --paper-fab-background: #00b4ff;
+        --paper-fab-background: #8baf27;
       }
       
       .container {

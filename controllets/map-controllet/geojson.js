@@ -17,8 +17,8 @@ GEOJSON_Provider.prototype.getHTMLFormattedMetadata = function (detail) {
     var ds = detail.dataset;
     var info = detail.info;
     if (ds && info) {
-        html += '<b>Resource Name:</b> <b style="color: #00b4ff;">' + (ds.rsTitle || ds.dsTitle) + '</b><br>';
-        html += '<div style="height: 1px; background: #00b4ff; margin: 12px 0;"></div>';
+        html += '<b>Resource Name:</b> <b style="color: #8baf27;">' + (ds.rsTitle || ds.dsTitle) + '</b><br>';
+        html += '<div style="height: 1px; background: #8baf27; margin: 12px 0;"></div>';
 
         html += '<b>Geometry Type:</b> ' + info.geometryType + '<br>';
         html += '<b>Features Count:</b> ' + info.featuresCount + '<br>';

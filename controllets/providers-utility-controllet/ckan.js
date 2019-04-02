@@ -19,12 +19,12 @@ ckan_Provider.prototype.getHTMLFormattedMetadata = function(dataset, resourceInd
 
     var html = '';
 
-    html += '<b>Resource Name:</b> <b style="color: #00b4ff;">' + dataset.resources[resourceIndex].name + '</b><br>';
-    html += '<b>Resource Description:</b> ' + dataset.resources[resourceIndex].description + '</b><div style="height: 1px; background: #00b4ff; margin: 12px 0;"></div>';
+    html += '<b>Resource Name:</b> <b style="color: #8baf27;">' + dataset.resources[resourceIndex].name + '</b><br>';
+    html += '<b>Resource Description:</b> ' + dataset.resources[resourceIndex].description + '</b><div style="height: 1px; background: #8baf27; margin: 12px 0;"></div>';
 
     html += '<b>Organization:</b> ' + ((dataset.organization) ? dataset.organization.name : "") + '<br>';
     html += '<b>Dataset Name:</b> ' + dataset.name + '<br>';
-    html += '<b>Dataset Title:</b> ' + dataset.title + '<div style="height: 1px; background: #00b4ff; margin: 12px 0;"></div>';
+    html += '<b>Dataset Title:</b> ' + dataset.title + '<div style="height: 1px; background: #8baf27; margin: 12px 0;"></div>';
     // html += '<b>Resource Name:</b> <b style="color: #F44336;">' + dataset.resources[resourceIndex].name + '</b><div style="height: 1px; background: #F44336; margin: 12px 0;"></div>';
     // html += '<b>Resource Description:</b> ' + dataset.resources[resourceIndex].description + '</b><div style="height: 1px; background: #F44336; margin: 12px 0;"></div>';
 

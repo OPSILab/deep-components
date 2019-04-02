@@ -18,7 +18,7 @@ SPOD_Provider.prototype.getHTMLFormattedMetadata = function(dataset, resourceInd
 
 
     html += '<b>' + ln["room_" + ln["localization"]] + ':</b>' + dataset.roomName + '<br>';
-    html += '<b>' + ln["resourceName_" + ln["localization"]] + ':</b> <b style="color: #00b4ff;">' + ((metas.title) ? metas.title : "") + '</b><br>';
+    html += '<b>' + ln["resourceName_" + ln["localization"]] + ':</b> <b style="color: #8baf27;">' + ((metas.title) ? metas.title : "") + '</b><br>';
     html += '<b>' + ln["resourceDescription_" + ln["localization"]] + ':</b>' + ((metas.description) ? metas.description : "") + '</b><br>';
 
     html += '<b>' + ln["users_" + ln["localization"]] + ':</b> <div class="user_icons" style="display: flex; flex-direction: row;">';
@@ -31,7 +31,7 @@ SPOD_Provider.prototype.getHTMLFormattedMetadata = function(dataset, resourceInd
     }
     html += '</div>';
 
-    html += '<div style="height: 1px; background: #00b4ff; margin: 12px 0;"></div>';
+    html += '<div style="height: 1px; background: #8baf27; margin: 12px 0;"></div>';
 
     // for(var i in metas)
     //     html += '<b>' + i + ':</b> ' + metas[i] + '<br>';
