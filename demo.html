@@ -13,102 +13,6 @@
 
 <!--     <script type="text/javascript" src="docs/js/editarea_0_8_2/edit_area/edit_area_full.js"></script> -->
 
-    <script type="text/javascript">
-        $(document).ready(function () {
-		document.getElementById('controllet_iframe').src = "controllet_odf.html" + window.location.search;																							
-//             editAreaLoader.init({
-//                 id : "text_area",         // textarea id
-//                 syntax: "html",           // syntax to be uses for highgliting
-//                 start_highlight: true,    // to display with highlight mode on start-up
-//                 replace_tab_by_spaces: 4,
-//                 isEditable : false
-//             });
-        });
-
-        var copyToClipboard = function(){
-        	
-      		var copyText = document.getElementById("export_html_textarea");
-        	copyText.select();
-        	document.execCommand("copy");
-        }
-        
-        var createHTML = function(e)
-        {
-            var dataletHTML = "";
-
-            dataletHTML = '<' + e.detail.data.datalet;
-
-			var title="";
-			var description="";
-			
-			//console.log(e.detail.data);
-			
-            for (var property in e.detail.data.params) {
-                if (e.detail.data.params.hasOwnProperty(property)) {
-                    if(property != "_colorIndex" && property != "data-url")
-                        dataletHTML += ' ' + property + '=\'' + e.detail.data.params[property] + '\'';
-					else if(property == "data-url")
-						dataletHTML += ' ' + property + '=\'' + unescape(e.detail.data.params[property]) + '\'';
-                }
-				
-				if(property=="datalettitle"){
-					title=e.detail.data.params[property];
-				}
-				
-				if(property=="description"){
-					description=e.detail.data.params[property];
-				}
-            }
-
-            dataletHTML += ' fields=\'' + JSON.stringify(e.detail.data.fields) + '\'';
-			
-            var format=e.detail.data.format;
-            if(format!=undefined &&  format.toLowerCase()=='csv'){
-                dataletHTML += ' data=\''   + e.detail.data.staticData + '\'';
-            }
-            dataletHTML += ' format=\'' +format + '\'';
-            dataletHTML += '>';
-            dataletHTML += '</'+e.detail.data.datalet+'>';
-			
-            //var dataletImport   = '\<script type="text/javascript" src="https://cdn.jsdelivr.net/webcomponentsjs/0.7.16/webcomponents-lite.min.js"\>\<\/script\>\n' +
-
-            var dataletImport   = '\<script type="text/javascript" src="'+getDeepBaseUrl()+'deep-components/bower_components/webcomponentsjs/webcomponents-lite.min.js"\>\<\/script\>\n' +
-                                  '\<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"\>\<\/script\>\n' +
-                                  '<!-- REMOVE THE PREVIOUS SCRIPT TAGS IF YOUR PAGE ALREADY USES JQUERY AND POLYFILL LIBRARIES  -->\n';
-
-			var dataletLink     = '<link rel="import" href="'+getDeepBaseUrl()+'deep-components/datalets/'+e.detail.data.datalet+'/'+e.detail.data.datalet+'.html" /> \n';
-
-			$(".export_html_textarea").val(dataletImport+dataletLink+dataletHTML);
-            //editAreaLoader.setValue("text_area", dataletImport+dataletLink+dataletHTML);
-			//Polymer.dom(this.root).appendChild(div);
-		
-			var storeDatalet = e.detail.storeDatalet;
-			
-			$.ajax({
-				url: getODFUrl()+"Idra/api/v1/client/catalogues/"+storeDatalet.nodeID+"/dataset/"+storeDatalet.datasetID+"/distribution/"+storeDatalet.distributionID+"/createDatalet",
-				type: "POST",
-				//dataType:"json",
-				contentType: "application/json",
-				data:	JSON.stringify({
-					"datalet_html": dataletLink+dataletHTML,
-					"title":title,
-					"description":description
-					}),
-				success: function(data, textStatus, xhr){
-		            document.getElementById('text_area_container').style.display = "block";
-// 		            $("#add_button").attr("disabled", "disabled");
-					//document.getElementById('controllet_iframe').contentWindow.document.getElementById('add_button').disable=true;
-				},
-				error:function(data, textStatus,xhr){
-					$("#errorMess").text("Unable to create datalet!");
-					document.getElementById('error_area_container').style.display = "block";
-				}
-			});
-			
-        }
-
-    </script>
-
     <style is="custom-style">
 
         #creator_container {
@@ -280,6 +184,96 @@
         </div>
         
     </div>
+
+<script type="text/javascript">
+        $(document).ready(function () {
+			document.getElementById('controllet_iframe').src = "controllet_odf.html" + window.location.search;																							
+        });
+
+        
+        var copyToClipboard = function(){
+        	
+      		var copyText = document.getElementById("export_html_textarea");
+        	copyText.select();
+        	document.execCommand("copy");
+        }
+        
+        var createHTML = function(e)
+        {
+            var dataletHTML = "";
+
+            dataletHTML = '<' + e.detail.data.datalet;
+
+			var title="";
+			var description="";
+			
+			//console.log(e.detail.data);
+			
+            for (var property in e.detail.data.params) {
+                if (e.detail.data.params.hasOwnProperty(property)) {
+                    if(property != "_colorIndex" && property != "data-url")
+                        dataletHTML += ' ' + property + '=\'' + e.detail.data.params[property] + '\'';
+					else if(property == "data-url")
+						dataletHTML += ' ' + property + '=\'' + unescape(e.detail.data.params[property]) + '\'';
+                }
+				
+				if(property=="datalettitle"){
+					title=e.detail.data.params[property];
+				}
+				
+				if(property=="description"){
+					description=e.detail.data.params[property];
+				}
+            }
+
+            dataletHTML += ' fields=\'' + JSON.stringify(e.detail.data.fields) + '\'';
+			
+            var format=e.detail.data.format;
+            if(format!=undefined &&  format.toLowerCase()=='csv'){
+                dataletHTML += ' data=\''   + e.detail.data.staticData + '\'';
+            }
+            dataletHTML += ' format=\'' +format + '\'';
+            dataletHTML += '>';
+            dataletHTML += '</'+e.detail.data.datalet+'>';
+			
+            //var dataletImport   = '\<script type="text/javascript" src="https://cdn.jsdelivr.net/webcomponentsjs/0.7.16/webcomponents-lite.min.js"\>\<\/script\>\n' +
+
+            var dataletImport   = '\<script type="text/javascript" src="'+getDeepBaseUrl()+'deep-components/bower_components/webcomponentsjs/webcomponents-lite.min.js"\>\<\/script\>\n' +
+                                  '\<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"\>\<\/script\>\n' +
+                                  '<!-- REMOVE THE PREVIOUS SCRIPT TAGS IF YOUR PAGE ALREADY USES JQUERY AND POLYFILL LIBRARIES  -->\n';
+
+			var dataletLink     = '<link rel="import" href="'+getDeepBaseUrl()+'deep-components/datalets/'+e.detail.data.datalet+'/'+e.detail.data.datalet+'.html" /> \n';
+
+			$(".export_html_textarea").val(dataletImport+dataletLink+dataletHTML);
+            //editAreaLoader.setValue("text_area", dataletImport+dataletLink+dataletHTML);
+			//Polymer.dom(this.root).appendChild(div);
+		
+			var storeDatalet = e.detail.storeDatalet;
+			
+			$.ajax({
+				url: getODFUrl()+"Idra/api/v1/client/catalogues/"+storeDatalet.nodeID+"/dataset/"+storeDatalet.datasetID+"/distribution/"+storeDatalet.distributionID+"/createDatalet",
+				type: "POST",
+				//dataType:"json",
+				contentType: "application/json",
+				data:	JSON.stringify({
+					"datalet_html": dataletLink+dataletHTML,
+					"title":title,
+					"description":description
+					}),
+				success: function(data, textStatus, xhr){
+		            document.getElementById('text_area_container').style.display = "block";
+// 		            $("#add_button").attr("disabled", "disabled");
+					//document.getElementById('controllet_iframe').contentWindow.document.getElementById('add_button').disable=true;
+				},
+				error:function(data, textStatus,xhr){
+					$("#errorMess").text("Unable to create datalet!");
+					document.getElementById('error_area_container').style.display = "block";
+				}
+			});
+			
+        }
+
+    </script>
 
 </body>
 </html>
